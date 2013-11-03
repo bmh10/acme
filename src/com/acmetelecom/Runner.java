@@ -6,13 +6,13 @@ public class Runner {
 		System.out.println("Running...");
 		BillingSystem billingSystem = new BillingSystem();
 		
-		billingSystem.callInitiated("447722113434", "447766511332");
+		billingSystem.callInitiated("447711232343", "447766511332");
 		sleepSeconds(2);
-		billingSystem.callCompleted("447722113434", "447766511332");
+		billingSystem.callCompleted("447711232343", "447766511332");
 		
-		billingSystem.callInitiated("447722113434", "447766511111");
+		billingSystem.callInitiated("447711232343", "447766511111");
 		sleepSeconds(2);
-		billingSystem.callCompleted("447722113434", "447766511111");
+		billingSystem.callCompleted("447711232343", "447766511111");
 		
 		billingSystem.callInitiated("447711111111", "447766511332");
 		sleepSeconds(2);

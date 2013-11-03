@@ -12,7 +12,7 @@ import java.util.*;
 public class BillingSystem implements IBillingSystem {
 
 	// TODO: change this to hash map key => caller
-    private List<CallEvent> callLog = new ArrayList<CallEvent>();
+    private HashMap<String, ArrayList<CallEvent>> callLog = new HashMap<String, ArrayList<CallEvent>>();
     
     private ICallCostCalculator callCostCalculator;
     
@@ -22,28 +22,45 @@ public class BillingSystem implements IBillingSystem {
     }
 
     public void callInitiated(String caller, String callee) {
-        callLog.add(new CallStart(caller, callee));
+    	ArrayList<CallEvent> callEvents = callLog.get(caller);
+    	if (callEvents == null) {
+    		callEvents = new ArrayList<CallEvent>();
+    	}
+    	
+    	callEvents.add(new CallStart(caller, callee));
+        callLog.put(caller, callEvents);
     }
 
     public void callCompleted(String caller, String callee) {
-        callLog.add(new CallEnd(caller, callee));
+    	ArrayList<CallEvent> callEvents = callLog.get(caller);
+    	if (callEvents == null) {
+    		callEvents = new ArrayList<CallEvent>();
+    	}
+    	
+    	callEvents.add(new CallEnd(caller, callee));
+        callLog.put(caller, callEvents);
     }
 
     public void createCustomerBills() {
         List<Customer> customers = CentralCustomerDatabase.getInstance().getCustomers();
         for (Customer customer : customers) {
+        	System.out.println("Name: " + customer.getFullName() + " No: " + customer.getPhoneNumber() + "Plan: " + customer.getPricePlan());
             createBillFor(customer);
         }
         callLog.clear();
     }
 
     private void createBillFor(Customer customer) {
-        List<CallEvent> customerEvents = new ArrayList<CallEvent>();
-        for (CallEvent callEvent : callLog) {
-            if (callEvent.getCaller().equals(customer.getPhoneNumber())) {
-                customerEvents.add(callEvent);
-            }
+        List<CallEvent> customerEvents = callLog.get(customer.getPhoneNumber());
+        if (customerEvents == null) {
+        	return;
         }
+        
+//        for (CallEvent callEvent : callLog) {
+//            if (callEvent.getCaller().equals(customer.getPhoneNumber())) {
+//                customerEvents.add(callEvent);
+//            }
+//        }
 
         List<Call> calls = new ArrayList<Call>();
 
