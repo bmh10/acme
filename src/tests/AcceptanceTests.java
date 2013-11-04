@@ -119,35 +119,3 @@ public class AcceptanceTests {
 	}
 	
 }
-
-//TODO: move to separate file
-class DummyCustomerDatabase implements CustomerDatabase {
-
-	private HashMap<Customer, Tariff> customers;
-	
-	public DummyCustomerDatabase(HashMap<Customer, Tariff> customers) {
-		this.customers = customers;
-	}
-	
-	@Override
-	public List<Customer> getCustomers() {
-		ArrayList<Customer> customerList = new ArrayList<Customer>();
-		customerList.addAll(customers.keySet());
-		return customerList;
-	}
-}
-
-//TODO: move to separate file
-class DummyTariffDatabase implements TariffLibrary {
-
-	private HashMap<Customer, Tariff> tariffs;
-	
-	public DummyTariffDatabase(HashMap<Customer, Tariff> tariffs) {
-		this.tariffs = tariffs;
-	}
-
-	@Override
-	public Tariff tarriffFor(Customer customer) {
-		return tariffs.get(customer);
-	}
-}
