@@ -1,15 +1,15 @@
 package com.acmetelecom;
 
-class HtmlPrinter implements Printer {
+public class HtmlPrinter implements IPrinter {
 
-    private static Printer instance = new HtmlPrinter();
+    //private static Printer instance = new HtmlPrinter();
 
-    private HtmlPrinter() {
+    public HtmlPrinter() {
     }
 
-    public static Printer getInstance() {
-        return instance;
-    }
+//    public static Printer getInstance() {
+//        return instance;
+//    }
 
     public void printHeading(String name, String phoneNumber, String pricePlan) {
         beginHtml();

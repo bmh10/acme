@@ -2,25 +2,29 @@ package com.acmetelecom;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 import org.joda.time.*;
 
 import com.acmetelecom.customer.CentralTariffDatabase;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.Tariff;
-
+import com.acmetelecom.customer.TariffLibrary;
 import com.acmetelecom.DaytimePeakPeriod.DayPeriod;
 
 public class CallCostCalculator implements ICallCostCalculator {
 
 	private DaytimePeakPeriod daytimePeakPeriod;
 	
-	public CallCostCalculator() {
+	private TariffLibrary tariffDatabase;
+	
+	public CallCostCalculator(TariffLibrary tariffDatabase) {
 		daytimePeakPeriod = new DaytimePeakPeriod();
+		this.tariffDatabase = tariffDatabase;
 	}
 	
 	public BigDecimal calculateCallCost(Customer customer, Call call) {
 		
-		Tariff tariff = CentralTariffDatabase.getInstance().tarriffFor(customer);
+		Tariff tariff = tariffDatabase.tarriffFor(customer);
         BigDecimal cost = new BigDecimal(0.0);
         
         DateTime start = call.startTime();
@@ -57,6 +61,7 @@ public class CallCostCalculator implements ICallCostCalculator {
 	        		firstPeriod = false;
         		}
         	}
+        	// TODO: could make this better - if not at end day then add cost for whole day (if at start of day)
         	else if (currentDay != endDay || (currentDay == endDay && currentPeriod != endPeriod))
         	{
         		// Add cost of whole period.

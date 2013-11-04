@@ -3,11 +3,14 @@ package com.acmetelecom;
 import com.acmetelecom.customer.CentralCustomerDatabase;
 import com.acmetelecom.customer.CentralTariffDatabase;
 import com.acmetelecom.customer.Customer;
+import com.acmetelecom.customer.CustomerDatabase;
 import com.acmetelecom.customer.Tariff;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+
+import org.joda.time.DateTime;
 
 public class BillingSystem implements IBillingSystem {
 
@@ -16,44 +19,58 @@ public class BillingSystem implements IBillingSystem {
     
     private ICallCostCalculator callCostCalculator;
     
-    public BillingSystem() {
+    private IBillGenerator billGenerator;
+    
+    CustomerDatabase customerDatabase;
+    
+    public BillingSystem(ICallCostCalculator callCostCalculator, IBillGenerator billGenerator, CustomerDatabase customerDatabase) {
     	// TODO: are we allowed to change constructor of BillingSystem? If so then pass in CallCostCalculator object.
-    	this.callCostCalculator = new CallCostCalculator();
+//    	this.callCostCalculator = new CallCostCalculator();
+//    	HtmlPrinter htmlPrinter = new HtmlPrinter();
+//    	this.billGenerator = new HtmlBillGenerator(htmlPrinter);
+//    	this.customerDatabase = CentralCustomerDatabase.getInstance();
+    	this.callCostCalculator = callCostCalculator;
+    	this.billGenerator = billGenerator;
+    	this.customerDatabase = customerDatabase;
     }
 
     public void callInitiated(String caller, String callee) {
-    	ArrayList<CallEvent> callEvents = callLog.get(caller);
-    	if (callEvents == null) {
-    		callEvents = new ArrayList<CallEvent>();
-    	}
-    	
-    	callEvents.add(new CallStart(caller, callee));
-        callLog.put(caller, callEvents);
+    	addEventToLog(caller, new CallStart(caller, callee, DateTime.now()));
     }
 
     public void callCompleted(String caller, String callee) {
-    	ArrayList<CallEvent> callEvents = callLog.get(caller);
-    	if (callEvents == null) {
-    		callEvents = new ArrayList<CallEvent>();
-    	}
-    	
-    	callEvents.add(new CallEnd(caller, callee));
-        callLog.put(caller, callEvents);
+    	addEventToLog(caller, new CallEnd(caller, callee, DateTime.now()));
+    }
+    
+    // TODO: better way to do this.
+    public void callInitiatedAtTime(String caller, String callee, DateTime time) {
+    	addEventToLog(caller, new CallStart(caller, callee, time));
     }
 
-    public void createCustomerBills() {
-        List<Customer> customers = CentralCustomerDatabase.getInstance().getCustomers();
+    public void callCompletedAtTime(String caller, String callee, DateTime time) {
+    	addEventToLog(caller, new CallEnd(caller, callee, time));
+    }
+
+    public ArrayList<Bill> createCustomerBills() {
+        List<Customer> customers = customerDatabase.getCustomers();
+        ArrayList<Bill> customerBills = new ArrayList<Bill>();
+        
         for (Customer customer : customers) {
-        	System.out.println("Name: " + customer.getFullName() + " No: " + customer.getPhoneNumber() + "Plan: " + customer.getPricePlan());
-            createBillFor(customer);
+        	//System.out.println("Name: " + customer.getFullName() + " No: " + customer.getPhoneNumber() + "Plan: " + customer.getPricePlan());
+            Bill bill = createBillFor(customer);
+            if (bill != null) {
+            	customerBills.add(bill);
+            }
         }
+        
         callLog.clear();
+        return customerBills;
     }
 
-    private void createBillFor(Customer customer) {
+    private Bill createBillFor(Customer customer) {
         List<CallEvent> customerEvents = callLog.get(customer.getPhoneNumber());
         if (customerEvents == null) {
-        	return;
+        	return new Bill(customer, new ArrayList<LineItem>(), MoneyFormatter.penceToPounds(new BigDecimal(0.0)));
         }
         
 //        for (CallEvent callEvent : callLog) {
@@ -65,12 +82,14 @@ public class BillingSystem implements IBillingSystem {
         List<Call> calls = new ArrayList<Call>();
 
         CallEvent start = null;
-        // TODO: this assumes customer events are in order...change it
+        // TODO: this assumes customer events are in order...change it to check start 
+        // TODO: order events by time in pairs?
         for (CallEvent event : customerEvents) {
             if (event instanceof CallStart) {
                 start = event;
             }
-            if (event instanceof CallEnd && start != null) {
+            if (event instanceof CallEnd && start != null 
+            	&& start.getCaller() == event.getCaller() && start.getCallee() == event.getCallee()) {
                 calls.add(new Call(start, event));
                 start = null;
             }
@@ -86,6 +105,18 @@ public class BillingSystem implements IBillingSystem {
             items.add(new LineItem(call, callCost));
         }
 
-        new BillGenerator().send(customer, items, MoneyFormatter.penceToPounds(totalBill));
+        Bill bill = new Bill(customer, items, MoneyFormatter.penceToPounds(totalBill));
+        billGenerator.generateBill(bill);
+        return bill;
+    }
+    
+    private void addEventToLog(String caller, CallEvent event) {
+    	ArrayList<CallEvent> callEvents = callLog.get(caller);
+    	if (callEvents == null) {
+    		callEvents = new ArrayList<CallEvent>();
+    	}
+    	
+    	callEvents.add(event);
+        callLog.put(caller, callEvents);
     }
 }

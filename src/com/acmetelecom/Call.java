@@ -1,7 +1,8 @@
 package com.acmetelecom;
 
-import java.text.SimpleDateFormat;
 import org.joda.time.*;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class Call {
     private CallEvent start;
@@ -21,9 +22,8 @@ public class Call {
     }
 
     public String date() {
-        //return SimpleDateFormat.getInstance().format(new Date(start.time()));
-    	// TODO: make new formatter.
-        return "TODO date formatter"; //(new DateTime(start.time()));
+    	DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+    	return dateFormatter.print(start.time());
     }
 
     public DateTime startTime() {
