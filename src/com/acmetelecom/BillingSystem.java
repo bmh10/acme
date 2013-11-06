@@ -1,14 +1,11 @@
 package com.acmetelecom;
 
-import com.acmetelecom.customer.CentralCustomerDatabase;
-import com.acmetelecom.customer.CentralTariffDatabase;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.CustomerDatabase;
-import com.acmetelecom.customer.Tariff;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
+import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 
@@ -23,6 +20,8 @@ public class BillingSystem implements IBillingSystem {
     
     CustomerDatabase customerDatabase;
     
+    static Logger log = Logger.getLogger(BillingSystem.class.getSimpleName());
+    
     public BillingSystem(ICallCostCalculator callCostCalculator, IBillGenerator billGenerator, CustomerDatabase customerDatabase) {
     	// TODO: are we allowed to change constructor of BillingSystem? If so then pass in CallCostCalculator object.
 //    	this.callCostCalculator = new CallCostCalculator();
@@ -35,10 +34,12 @@ public class BillingSystem implements IBillingSystem {
     }
 
     public void callInitiated(String caller, String callee) {
+    	log.info("Call started - from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
     	addEventToLog(caller, new CallStart(caller, callee, DateTime.now()));
     }
 
     public void callCompleted(String caller, String callee) {
+    	log.info("Call ended - from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
     	addEventToLog(caller, new CallEnd(caller, callee, DateTime.now()));
     }
     
