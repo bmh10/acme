@@ -17,7 +17,7 @@ import com.acmetelecom.CallCostCalculator;
 import com.acmetelecom.CallEvent;
 import com.acmetelecom.DaytimePeakPeriod;
 import com.acmetelecom.HtmlBillGenerator;
-import com.acmetelecom.HtmlPrinter;
+import com.acmetelecom.HtmlBillPrinter;
 import com.acmetelecom.IBillingSystem;
 import com.acmetelecom.LineItem;
 import com.acmetelecom.customer.CentralCustomerDatabase;
@@ -61,7 +61,7 @@ public class AcceptanceTests {
 		CustomerDatabase customerDatabase = new DummyCustomerDatabase(dummyCustomers);
 		TariffLibrary tariffDatabase = new DummyTariffDatabase(dummyCustomers);
 		
-		HtmlBillGenerator billGenerator = new HtmlBillGenerator(new HtmlPrinter());
+		HtmlBillGenerator billGenerator = new HtmlBillGenerator(new HtmlBillPrinter());
 		CallCostCalculator callCostCalculator = new CallCostCalculator(tariffDatabase, new DaytimePeakPeriod());
 
 		this.billingSystem = new BillingSystem(callCostCalculator, billGenerator, customerDatabase);

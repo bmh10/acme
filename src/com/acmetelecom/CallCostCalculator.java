@@ -11,19 +11,31 @@ import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.Tariff;
 import com.acmetelecom.customer.TariffLibrary;
 
+/**
+ * Contains logic for calculating call costs.
+ */
 public class CallCostCalculator implements ICallCostCalculator {
 
 	private DaytimePeakPeriod daytimePeakPeriod;
-	
 	private TariffLibrary tariffDatabase;
 	
 	private Logger log = Logger.getLogger(CallCostCalculator.class.getSimpleName());
 	
+	/**
+	 * Constructor.
+	 * @param tariffDatabase The tariff database to use when looking up customer's tariffs.
+	 * @param daytimePeakPeriod The DaytimePeakPeriod containing information about period timings.
+	 */
 	public CallCostCalculator(TariffLibrary tariffDatabase, DaytimePeakPeriod daytimePeakPeriod) {
 		this.tariffDatabase = tariffDatabase;
 		this.daytimePeakPeriod = daytimePeakPeriod;
 	}
 	
+	/**
+	 * Calculates the cost of a the specified call for the specified customer.
+	 * @param customer The customer to calculate the call cost for (cost depends on which tariff they are on).
+	 * @param call The call to calculate the cost of.
+	 */
 	public BigDecimal calculateCallCost(Customer customer, Call call) {
 		AssertionHelper.NotNull(customer, "customer");
 		AssertionHelper.NotNull(call, "call");

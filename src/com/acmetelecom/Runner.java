@@ -23,7 +23,7 @@ public class Runner {
 		TariffLibrary tariffDatabase = CentralTariffDatabase.getInstance();
 		CustomerDatabase customerDatabase = CentralCustomerDatabase.getInstance();
 		CallCostCalculator callCostCalculator = new CallCostCalculator(tariffDatabase, new DaytimePeakPeriod());
-		HtmlBillGenerator billGenerator = new HtmlBillGenerator(new HtmlPrinter());
+		HtmlBillGenerator billGenerator = new HtmlBillGenerator(new HtmlBillPrinter());
 		
 		BillingSystem billingSystem = new BillingSystem(callCostCalculator, billGenerator, customerDatabase);
 		

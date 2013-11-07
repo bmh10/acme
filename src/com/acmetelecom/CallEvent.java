@@ -1,6 +1,6 @@
 package com.acmetelecom;
 
-/*
+/**
  * Contains information about a call event.
  */
 public abstract class CallEvent {
