@@ -61,37 +61,30 @@ public class CallCostCalculator implements ICallCostCalculator {
         	int currentDay = currentTime.getDayOfYear();
         	currentPeriod = daytimePeakPeriod.getPeriodOfDay(currentTime);
         	BigDecimal currentPeriodRate = daytimePeakPeriod.getPeriodRate(currentPeriod, tariff);
+        	boolean callEndsThisPeriod = currentDay == endDay && currentPeriod == endPeriod;
         	
-        	if (firstPeriod) {
-        		if (currentDay == endDay && currentPeriod == endPeriod) {
-        			int time = end.getSecondOfDay() - start.getSecondOfDay();
-            		BigDecimal periodCost = new BigDecimal(time).multiply(currentPeriodRate);
-            		cost = cost.add(periodCost);
-            		done = true;
-        		}
-        		else {
-	        		int time = daytimePeakPeriod.getSecondInDayAtEndOfPeriod(currentPeriod) - start.getSecondOfDay();
-	        		BigDecimal periodCost = new BigDecimal(time).multiply(currentPeriodRate);
-	        		cost = cost.add(periodCost);
-	        		currentTime = currentTime.plusSeconds(time);
-	        		firstPeriod = false;
-        		}
+        	// First period (if call does not end in first period) -> add cost from start time until end of first period.
+        	if (firstPeriod && !callEndsThisPeriod) {
+        		int time = daytimePeakPeriod.getSecondInDayAtEndOfPeriod(currentPeriod) - start.getSecondOfDay();
+        		BigDecimal periodCost = new BigDecimal(time).multiply(currentPeriodRate);
+        		cost = cost.add(periodCost);
+        		currentTime = currentTime.plusSeconds(time);
+        		firstPeriod = false;
         	}
-        	// TODO: could make this better - if not at end day then add cost for whole day (if at start of day)
-        	else if (currentDay != endDay || (currentDay == endDay && currentPeriod != endPeriod))
-        	{
-        		// Add cost of whole period.
-    			int periodDuration = daytimePeakPeriod.getPeriodDurationSeconds(currentPeriod);
-    			BigDecimal periodCost = new BigDecimal(periodDuration).multiply(currentPeriodRate);
-    			cost = cost.add(periodCost);
-    			currentTime = currentTime.plusSeconds(periodDuration);
-        	}
-        	// Call ends in this period.
-        	else {
+        	// Call ends in this period -> add cost from now until call end time.
+        	else if (callEndsThisPeriod) {
         		int time = end.getSecondOfDay() - currentTime.getSecondOfDay();
         		BigDecimal periodCost = new BigDecimal(time).multiply(currentPeriodRate);
         		cost = cost.add(periodCost);
         		done = true;
+        	}
+        	// TODO: could make this more efficient -> if not at endDay and at PrePeak period then add cost for whole day.
+        	// Call continues throughout this period -> add cost of whole period.
+        	else {
+    			int periodDuration = daytimePeakPeriod.getPeriodDurationSeconds(currentPeriod);
+    			BigDecimal periodCost = new BigDecimal(periodDuration).multiply(currentPeriodRate);
+    			cost = cost.add(periodCost);
+    			currentTime = currentTime.plusSeconds(periodDuration);
         	}
         }
         

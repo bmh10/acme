@@ -48,7 +48,7 @@ public class BillingSystem implements IBillingSystem {
     }
 
     /**
-     * Called when a call is started.
+     * Called when a call is ended.
      * @param caller The caller phone number.
      * @param callee The callee phone number.
      */
