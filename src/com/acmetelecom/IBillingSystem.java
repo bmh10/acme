@@ -10,9 +10,9 @@ public interface IBillingSystem {
 
     void callCompleted(String caller, String callee);
     
-    void callInitiatedAtTime(String caller, String callee, DateTime time);
-    	
-    void callCompletedAtTime(String caller, String callee, DateTime time);
+//    void callInitiatedAtTime(String caller, String callee, DateTime time);
+//    	
+//    void callCompletedAtTime(String caller, String callee, DateTime time);
 
     ArrayList<Bill> createCustomerBills();
 }

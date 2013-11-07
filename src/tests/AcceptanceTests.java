@@ -77,8 +77,8 @@ public class AcceptanceTests {
 		
 		DateTime callStartTime = new DateTime(2013, 11, 4, 7, 54, 30);
 		DateTime callEndTime = callStartTime.plusMinutes(callDurationMins);
-		billingSystem.callInitiatedAtTime(caller, callee, callStartTime);
-		billingSystem.callCompletedAtTime(caller, callee, callEndTime);
+		//billingSystem.callInitiatedAtTime(caller, callee, callStartTime);
+		//billingSystem.callCompletedAtTime(caller, callee, callEndTime);
 		
 		ArrayList<Bill> bills = billingSystem.createCustomerBills();
 		assertTrue(bills.size() == dummyCustomers.size());

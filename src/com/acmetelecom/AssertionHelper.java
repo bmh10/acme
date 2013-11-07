@@ -1,11 +1,16 @@
 package com.acmetelecom;
 
-import java.util.logging.Logger;
-
+/**
+ * Utility class to help with making general assertions.
+ */
 public class AssertionHelper {
-
-	private static Logger log = Logger.getLogger(AssertionHelper.class.getSimpleName());
 	
+	/**
+	 * Makes an object not null assertion.
+	 * @param o The object to check.
+	 * @param paramName The object name.
+	 * @exception IllegalArgumentException Thrown if the object is null.
+	 */
 	public static void NotNull(Object o, String paramName) {
 		if (o == null) {
 			throw new IllegalArgumentException(paramName + " cannot be null.");

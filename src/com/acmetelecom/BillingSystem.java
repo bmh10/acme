@@ -9,73 +9,93 @@ import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 
+/**
+ * High-level billing system logic, concerned with storing call events and creating customer bills.
+ */
 public class BillingSystem implements IBillingSystem {
 
+	static Logger log = Logger.getLogger(BillingSystem.class.getSimpleName());
+	
 	// TODO: DONE change this to hash map key => caller
+	// The call event log which is indexed by caller phone number.
     private HashMap<String, ArrayList<CallEvent>> callLog = new HashMap<String, ArrayList<CallEvent>>();
-    
+ 
     private ICallCostCalculator callCostCalculator;
-    
     private IBillGenerator billGenerator;
+    private CustomerDatabase customerDatabase;
     
-    CustomerDatabase customerDatabase;
-    
-    static Logger log = Logger.getLogger(BillingSystem.class.getSimpleName());
-    
+    /**
+     * Constructor.
+     * @param callCostCalculator The call cost calculator to use when generating bills.
+     * @param billGenerator The bill generator to use to generate bills.
+     * @param customerDatabase The customer database to refer to for customer information.
+     */
     public BillingSystem(ICallCostCalculator callCostCalculator, IBillGenerator billGenerator, CustomerDatabase customerDatabase) {
-    	// TODO: are we allowed to change constructor of BillingSystem? If so then pass in CallCostCalculator object.
-//    	this.callCostCalculator = new CallCostCalculator();
-//    	HtmlPrinter htmlPrinter = new HtmlPrinter();
-//    	this.billGenerator = new HtmlBillGenerator(htmlPrinter);
-//    	this.customerDatabase = CentralCustomerDatabase.getInstance();
+    	// TODO: are we allowed to change constructor of BillingSystem? If not then need to change this -> use a factory class.
     	this.callCostCalculator = callCostCalculator;
     	this.billGenerator = billGenerator;
     	this.customerDatabase = customerDatabase;
     }
 
+    /**
+     * Called when a call is started.
+     * @param caller The caller phone number.
+     * @param callee The callee phone number.
+     */
     public void callInitiated(String caller, String callee) {
     	log.info("Call started: from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
     	addEventToLog(caller, new CallStart(caller, callee, DateTime.now()));
     }
 
+    /**
+     * Called when a call is started.
+     * @param caller The caller phone number.
+     * @param callee The callee phone number.
+     */
     public void callCompleted(String caller, String callee) {
     	log.info("Call ended: from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
     	addEventToLog(caller, new CallEnd(caller, callee, DateTime.now()));
     }
     
     // TODO: better way to do this.
-    public void callInitiatedAtTime(String caller, String callee, DateTime time) {
-    	addEventToLog(caller, new CallStart(caller, callee, time));
-    }
+//    public void callInitiatedAtTime(String caller, String callee, DateTime time) {
+//    	addEventToLog(caller, new CallStart(caller, callee, time));
+//    }
+//
+//    public void callCompletedAtTime(String caller, String callee, DateTime time) {
+//    	addEventToLog(caller, new CallEnd(caller, callee, time));
+//    }
 
-    public void callCompletedAtTime(String caller, String callee, DateTime time) {
-    	addEventToLog(caller, new CallEnd(caller, callee, time));
-    }
-
+    /**
+     * Creates bills for all customers, prints them out and returns them as a list of type Bill.
+     * @return ArrayList<Bill> The list of created bills, one per customer.
+     */
     public ArrayList<Bill> createCustomerBills() {
         List<Customer> customers = customerDatabase.getCustomers();
         ArrayList<Bill> customerBills = new ArrayList<Bill>();
         
         for (Customer customer : customers) {
-        	//System.out.println("Name: " + customer.getFullName() + " No: " + customer.getPhoneNumber() + "Plan: " + customer.getPricePlan());
             Bill bill = createBillFor(customer);
-            if (bill != null) {
-            	customerBills.add(bill);
-            }
+            customerBills.add(bill);
         }
         
         callLog.clear();
         return customerBills;
     }
 
+    /**
+     * Creates a bill for a specific customer.
+     * @param customer The customer to create a bill for.
+     * @return Bill The customer's bill.
+     */
     private Bill createBillFor(Customer customer) {
         List<CallEvent> customerEvents = callLog.get(customer.getPhoneNumber());
         if (customerEvents == null) {
         	return new Bill(customer, new ArrayList<LineItem>(), MoneyFormatter.penceToPounds(new BigDecimal(0.0)));
         }
         
+        // Separate events into specific calls.
         List<Call> calls = new ArrayList<Call>();
-
         CallEvent start = null;
         // TODO: this assumes customer events are in order...change it to check start 
         // TODO: order events by time in pairs?
@@ -105,6 +125,11 @@ public class BillingSystem implements IBillingSystem {
         return bill;
     }
     
+    /**
+     * Adds an event to the event log indexed by phone number.
+     * @param caller The phone number of the caller.
+     * @param event The event to add to the event log.
+     */
     private void addEventToLog(String caller, CallEvent event) {
     	ArrayList<CallEvent> callEvents = callLog.get(caller);
     	if (callEvents == null) {

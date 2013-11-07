@@ -104,34 +104,48 @@ public class CallCostCalculatorTests {
 	@Test
 	public void CallThatStartsInOffPeakPeriodAndEndsInPeakPeriodOnSameDayIsChargedCorrectly() {
 		// Setup.
-		int callLengthMins = 26;
+		int offPeakTime = 12;
+		int peakTime = 14;
 		Tariff tariff = Tariff.Standard;
-		DateTime startTime = new DateTime(2013, 11, 5, daytimePeakPeriod.PeakStart - 1, 48);
-		DateTime endTime = startTime.plusMinutes(callLengthMins);
+		DateTime startTime = new DateTime(2013, 11, 5, daytimePeakPeriod.PeakStart - 1, 60 - offPeakTime);
+		DateTime endTime = startTime.plusMinutes(offPeakTime + peakTime);
 		Call call = this.setupCall(startTime, endTime);
 		Customer customer = this.setupCustomer(tariff);
 		
 		// Run.
 		BigDecimal result = callCostCalculator.calculateCallCost(customer, call);
 		
-		// TODO: make this less brittle...
 		// Checks.
-		BigDecimal expectedOffPeakCost = new BigDecimal(12*60).multiply(tariff.offPeakRate());
-		BigDecimal expectedTotalCost = expectedOffPeakCost.add(new BigDecimal(14*60).multiply(tariff.peakRate()));
+		BigDecimal expectedOffPeakCost = new BigDecimal(offPeakTime*60).multiply(tariff.offPeakRate());
+		BigDecimal expectedTotalCost = expectedOffPeakCost.add(new BigDecimal(peakTime*60).multiply(tariff.peakRate()));
 		expectedTotalCost = expectedTotalCost.setScale(0, RoundingMode.HALF_UP);
 		assertTrue(result.equals(expectedTotalCost));
 	}
 	
 	@Test
 	public void CallThatStartsInPeakPeriodAndEndsInOffPeakPeriodOnSameDayIsChargedCorrectly() {
+		// Setup.
+		int peakTime = 32;
+		int offPeakTime = 23;
+		Tariff tariff = Tariff.Standard;
+		DateTime startTime = new DateTime(2013, 11, 5, daytimePeakPeriod.PeakEnd - 1, 60 - peakTime);
+		DateTime endTime = startTime.plusMinutes(offPeakTime + peakTime);
+		Call call = this.setupCall(startTime, endTime);
+		Customer customer = this.setupCustomer(tariff);
 		
+		// Run.
+		BigDecimal result = callCostCalculator.calculateCallCost(customer, call);
+		
+		// Checks.
+		BigDecimal expectedOffPeakCost = new BigDecimal(offPeakTime*60).multiply(tariff.offPeakRate());
+		BigDecimal expectedTotalCost = expectedOffPeakCost.add(new BigDecimal(peakTime*60).multiply(tariff.peakRate()));
+		expectedTotalCost = expectedTotalCost.setScale(0, RoundingMode.HALF_UP);
+		assertTrue(result.equals(expectedTotalCost));
 	}
 	
-	// Call that starts in peak and ends in off-peak on same day.
+	// TODO: Multiple tests for calls which span multiple days and periods.
 	
-	// Tests for calls which span multiple days and periods.
-	
-	// Test for call that goes over end of year into new year.
+	// TODO: Test for call that goes over end of year into new year.
 
 	// Sets up call with specified start and end time.
 	private Call setupCall(DateTime startTime, DateTime endTime) {
