@@ -14,7 +14,7 @@ public class Runner {
 		// TODO: make factory to do this...
 		TariffLibrary tariffDatabase = CentralTariffDatabase.getInstance();
 		CustomerDatabase customerDatabase = CentralCustomerDatabase.getInstance();
-		CallCostCalculator callCostCalculator = new CallCostCalculator(tariffDatabase);
+		CallCostCalculator callCostCalculator = new CallCostCalculator(tariffDatabase, new DaytimePeakPeriod());
 		HtmlBillGenerator billGenerator = new HtmlBillGenerator(new HtmlPrinter());
 		BillingSystem billingSystem = new BillingSystem(callCostCalculator, billGenerator, customerDatabase);
 		

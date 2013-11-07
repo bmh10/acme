@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
 
 public class BillingSystem implements IBillingSystem {
 
-	// TODO: change this to hash map key => caller
+	// TODO: DONE change this to hash map key => caller
     private HashMap<String, ArrayList<CallEvent>> callLog = new HashMap<String, ArrayList<CallEvent>>();
     
     private ICallCostCalculator callCostCalculator;
@@ -34,12 +34,12 @@ public class BillingSystem implements IBillingSystem {
     }
 
     public void callInitiated(String caller, String callee) {
-    	log.info("Call started - from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
+    	log.info("Call started: from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
     	addEventToLog(caller, new CallStart(caller, callee, DateTime.now()));
     }
 
     public void callCompleted(String caller, String callee) {
-    	log.info("Call ended - from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
+    	log.info("Call ended: from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
     	addEventToLog(caller, new CallEnd(caller, callee, DateTime.now()));
     }
     
@@ -74,12 +74,6 @@ public class BillingSystem implements IBillingSystem {
         	return new Bill(customer, new ArrayList<LineItem>(), MoneyFormatter.penceToPounds(new BigDecimal(0.0)));
         }
         
-//        for (CallEvent callEvent : callLog) {
-//            if (callEvent.getCaller().equals(customer.getPhoneNumber())) {
-//                customerEvents.add(callEvent);
-//            }
-//        }
-
         List<Call> calls = new ArrayList<Call>();
 
         CallEvent start = null;
@@ -99,7 +93,7 @@ public class BillingSystem implements IBillingSystem {
         BigDecimal totalBill = new BigDecimal(0);
         List<LineItem> items = new ArrayList<LineItem>();
 
-        // TODO: move this into separate class, billing system shouldn't be concerned with individual call costing...
+        // TODO: DONE move this into separate class, billing system shouldn't be concerned with individual call costing...
         for (Call call : calls) {
         	BigDecimal callCost = callCostCalculator.calculateCallCost(customer, call);
             totalBill = totalBill.add(callCost);

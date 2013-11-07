@@ -7,25 +7,19 @@ import org.joda.time.DateTime;
 import com.acmetelecom.customer.Tariff;
 
 // TODO: add interface for this.
-class DaytimePeakPeriod {
+// Holds all information about when peak period starts/ends and methods related to this.
+public class DaytimePeakPeriod{
 
-	private int PeakStart = 7;
-	private int PeakEnd = 19;
+	// TODO: put these in config file??
+	public final int PeakStart = 7;
+	public final int PeakEnd = 19;
 	
 	// Defines periods in a day.
-	enum DayPeriod {
+	public enum DayPeriod {
 		PrePeak,
 		Peak,
 		PostPeak
-	};
-	
-//    public boolean offPeak(DateTime time) {
-////        Calendar calendar = Calendar.getInstance();
-////        calendar.setTime(time);
-////        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-//        int hour = time.getHourOfDay();
-//        return hour < 7 || hour >= 19;
-//    }
+	}
     
 	public int getPeriodDurationSeconds(DayPeriod period) {
  		switch (period) {
@@ -62,7 +56,6 @@ class DaytimePeakPeriod {
 		int hour = time.getHourOfDay();
 		if (hour < PeakStart) return DayPeriod.PrePeak;
 		if (hour < PeakEnd) return DayPeriod.Peak;
-		return DayPeriod.PostPeak;
-		
+		return DayPeriod.PostPeak;	
 	}
 }

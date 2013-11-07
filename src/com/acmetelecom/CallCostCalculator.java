@@ -6,10 +6,10 @@ import java.util.logging.Logger;
 
 import org.joda.time.*;
 
+import com.acmetelecom.DaytimePeakPeriod.DayPeriod;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.Tariff;
 import com.acmetelecom.customer.TariffLibrary;
-import com.acmetelecom.DaytimePeakPeriod.DayPeriod;
 
 public class CallCostCalculator implements ICallCostCalculator {
 
@@ -19,12 +19,14 @@ public class CallCostCalculator implements ICallCostCalculator {
 	
 	private Logger log = Logger.getLogger(CallCostCalculator.class.getSimpleName());
 	
-	public CallCostCalculator(TariffLibrary tariffDatabase) {
-		daytimePeakPeriod = new DaytimePeakPeriod();
+	public CallCostCalculator(TariffLibrary tariffDatabase, DaytimePeakPeriod daytimePeakPeriod) {
 		this.tariffDatabase = tariffDatabase;
+		this.daytimePeakPeriod = daytimePeakPeriod;
 	}
 	
 	public BigDecimal calculateCallCost(Customer customer, Call call) {
+		AssertionHelper.NotNull(customer, "customer");
+		AssertionHelper.NotNull(call, "call");
 		
 		Tariff tariff = tariffDatabase.tarriffFor(customer);
         BigDecimal cost = new BigDecimal(0.0);
