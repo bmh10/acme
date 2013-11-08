@@ -64,7 +64,7 @@ public class AcceptanceTests {
 		HtmlBillGenerator billGenerator = new HtmlBillGenerator(new HtmlBillPrinter());
 		CallCostCalculator callCostCalculator = new CallCostCalculator(tariffDatabase, new DaytimePeakPeriod());
 
-		this.billingSystem = new BillingSystem(callCostCalculator, billGenerator, customerDatabase);
+		this.billingSystem = new BillingSystem();
 	}
 	
 	@Test

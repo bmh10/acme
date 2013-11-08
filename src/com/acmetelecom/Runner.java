@@ -18,21 +18,10 @@ public class Runner {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Running...");
 		
-		// TODO: ask about dependency injection + changing constructors + using factory to get around.
-		// TODO: ask about throwing IllegalArumgent exception - does this count as 'changing behaviour'.
-		
 		// TODO: make CallEventManager which groups incoming events as Calls when corresponding start and end events are received.
 		// -> separate this behaviour from BillingSystem which should not be concerned with call events (SRP).
 		
-		// Dependency injection.
-		// TODO: make factory to do this...
-		TariffLibrary tariffDatabase = CentralTariffDatabase.getInstance();
-		CustomerDatabase customerDatabase = CentralCustomerDatabase.getInstance();
-		CallCostCalculator callCostCalculator = new CallCostCalculator(tariffDatabase, new DaytimePeakPeriod());
-		HtmlBillGenerator billGenerator = new HtmlBillGenerator(new HtmlBillPrinter());
-		
-		BillingSystem billingSystem = new BillingSystemFactory().create(); 
-		//new BillingSystem(callCostCalculator, billGenerator, customerDatabase);
+		BillingSystem billingSystem = new BillingSystem();
 		
 		billingSystem.callInitiated("447711232343", "447766511332");
 		sleepSeconds(2);

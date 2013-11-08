@@ -25,6 +25,14 @@ public class Call {
     }
 
     /**
+     * Gets the caller associated with this call.
+     * @return The caller's phone number.
+     */
+    public String caller() {
+        return start.getCaller();
+    }
+    
+    /**
      * Gets the callee associated with this call.
      * @return The callee's phone number.
      */

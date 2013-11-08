@@ -19,10 +19,7 @@ public class BillingSystem implements IBillingSystem {
 
 	static Logger log = Logger.getLogger(BillingSystem.class.getSimpleName());
 	
-	// TODO: DONE change this to hash map key => caller
-	// The call event log which is indexed by caller phone number.
-    private HashMap<String, ArrayList<CallEvent>> callLog = new HashMap<String, ArrayList<CallEvent>>();
- 
+    private ICallEventManager callEventManager;
     private ICallCostCalculator callCostCalculator;
     private IBillGenerator billGenerator;
     private CustomerDatabase customerDatabase;
@@ -32,6 +29,7 @@ public class BillingSystem implements IBillingSystem {
      */
     public BillingSystem() {
     	TariffLibrary tariffDatabase = CentralTariffDatabase.getInstance();
+    	this.callEventManager = new CallEventManager();
 		this.callCostCalculator = new CallCostCalculator(tariffDatabase, new DaytimePeakPeriod());
 		this.billGenerator = new HtmlBillGenerator(new HtmlBillPrinter());
 		this.customerDatabase = CentralCustomerDatabase.getInstance();
@@ -39,15 +37,18 @@ public class BillingSystem implements IBillingSystem {
     
     /**
      * Constructor. To be used for dependency injection.
+     * @param callEventManager The call event manager to use when handling call events.
      * @param callCostCalculator The call cost calculator to use when generating bills.
      * @param billGenerator The bill generator to use to generate bills.
      * @param customerDatabase The customer database to refer to for customer information.
      * @exception IllegalArgumentException If any of arguments are null.
      */
-    public BillingSystem(ICallCostCalculator callCostCalculator, IBillGenerator billGenerator, CustomerDatabase customerDatabase) {
+    public BillingSystem(ICallEventManager callEventManager, ICallCostCalculator callCostCalculator, IBillGenerator billGenerator, CustomerDatabase customerDatabase) {
+    	AssertionHelper.NotNull(callEventManager, "callEventManager");
     	AssertionHelper.NotNull(callCostCalculator, "callCostCalculator");
     	AssertionHelper.NotNull(billGenerator, "billGenerator");
     	AssertionHelper.NotNull(customerDatabase, "customerDatabase");
+    	this.callEventManager = callEventManager;
     	this.callCostCalculator = callCostCalculator;
     	this.billGenerator = billGenerator;
     	this.customerDatabase = customerDatabase;
@@ -57,26 +58,18 @@ public class BillingSystem implements IBillingSystem {
      * Called when a call is started.
      * @param caller The caller phone number.
      * @param callee The callee phone number.
-     * @exception IllegalArgumentException If any of arguments are null.
      */
     public void callInitiated(String caller, String callee) {
-    	AssertionHelper.NotNull(caller, "caller");
-    	AssertionHelper.NotNull(callee, "callee");
-    	log.info("Call started: from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
-    	addEventToLog(caller, new CallStart(caller, callee, DateTime.now()));
+    	this.callEventManager.handleEvent(new CallStart(caller, callee, DateTime.now()));
     }
 
     /**
      * Called when a call is ended.
      * @param caller The caller phone number.
      * @param callee The callee phone number.
-     * @exception IllegalArgumentException If any of arguments are null.
      */
     public void callCompleted(String caller, String callee) {
-    	AssertionHelper.NotNull(caller, "caller");
-    	AssertionHelper.NotNull(callee, "callee");
-    	log.info("Call ended: from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
-    	addEventToLog(caller, new CallEnd(caller, callee, DateTime.now()));
+    	this.callEventManager.handleEvent(new CallEnd(caller, callee, DateTime.now()));
     }
     
     // TODO: better way to do this.
@@ -101,7 +94,7 @@ public class BillingSystem implements IBillingSystem {
             customerBills.add(bill);
         }
         
-        callLog.clear();
+        this.callEventManager.clearCallLogs();
         return customerBills;
     }
 
@@ -111,29 +104,13 @@ public class BillingSystem implements IBillingSystem {
      * @return Bill The customer's bill.
      */
     private Bill createBillFor(Customer customer) {
-        List<CallEvent> customerEvents = callLog.get(customer.getPhoneNumber());
-        if (customerEvents == null) {
-        	return new Bill(customer, new ArrayList<LineItem>(), MoneyFormatter.penceToPounds(new BigDecimal(0.0)));
-        }
-        
-        // Separate events into specific calls.
-        List<Call> calls = new ArrayList<Call>();
-        CallEvent start = null;
-        // TODO: this assumes customer events are in order...change it to check start 
-        // TODO: order events by time in pairs?
-        for (CallEvent event : customerEvents) {
-            if (event instanceof CallStart) {
-                start = event;
-            }
-            if (event instanceof CallEnd && start != null 
-            	&& start.getCaller() == event.getCaller() && start.getCallee() == event.getCallee()) {
-                calls.add(new Call(start, event));
-                start = null;
-            }
-        }
-
-        BigDecimal totalBill = new BigDecimal(0);
+    	BigDecimal totalBill = new BigDecimal(0);
         List<LineItem> items = new ArrayList<LineItem>();
+        List<Call> calls = this.callEventManager.getCallsForCustomer(customer.getPhoneNumber());
+        
+        if (calls == null) {
+        	return new Bill(customer, items, MoneyFormatter.penceToPounds(totalBill));
+        }
 
         // TODO: DONE move this into separate class, billing system shouldn't be concerned with individual call costing...
         for (Call call : calls) {
@@ -145,20 +122,5 @@ public class BillingSystem implements IBillingSystem {
         Bill bill = new Bill(customer, items, MoneyFormatter.penceToPounds(totalBill));
         billGenerator.generateBill(bill);
         return bill;
-    }
-    
-    /**
-     * Adds an event to the event log indexed by phone number.
-     * @param caller The phone number of the caller.
-     * @param event The event to add to the event log.
-     */
-    private void addEventToLog(String caller, CallEvent event) {
-    	ArrayList<CallEvent> callEvents = callLog.get(caller);
-    	if (callEvents == null) {
-    		callEvents = new ArrayList<CallEvent>();
-    	}
-    	
-    	callEvents.add(event);
-        callLog.put(caller, callEvents);
     }
 }

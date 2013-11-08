@@ -9,6 +9,7 @@ import org.junit.rules.ExpectedException;
 import com.acmetelecom.BillingSystem;
 import com.acmetelecom.IBillGenerator;
 import com.acmetelecom.ICallCostCalculator;
+import com.acmetelecom.ICallEventManager;
 import com.acmetelecom.customer.CustomerDatabase;
 
 /**
@@ -23,6 +24,7 @@ public class BillingSystemTests {
 	public ExpectedException exception = ExpectedException.none();
 	
 	private Mockery context;
+	private ICallEventManager mockCallEventManager;
 	private ICallCostCalculator mockCallCostCalculator;
 	private IBillGenerator mockBillGenerator;
 	private CustomerDatabase mockCustomerDatabase;
@@ -36,10 +38,11 @@ public class BillingSystemTests {
 	@Before
 	public void setup() {
 		context = new Mockery();
+		mockCallEventManager = context.mock(ICallEventManager.class);
 		mockCallCostCalculator = context.mock(ICallCostCalculator.class);
 		mockBillGenerator = context.mock(IBillGenerator.class);
 		mockCustomerDatabase = context.mock(CustomerDatabase.class);
-		billingSystem = new BillingSystem(mockCallCostCalculator, mockBillGenerator, mockCustomerDatabase);
+		billingSystem = new BillingSystem(mockCallEventManager, mockCallCostCalculator, mockBillGenerator, mockCustomerDatabase);
 	}
 	
 	/**
@@ -48,7 +51,7 @@ public class BillingSystemTests {
 	@Test
 	public void AttemptingToCreateBillingSystemWithNullParametersThrowsInvalidArgumentException() {
 		exception.expect(IllegalArgumentException.class);
-		new BillingSystem(null, null, null);
+		new BillingSystem(null, null, null, null);
 	}
 	
 	@Test
