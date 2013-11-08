@@ -21,6 +21,9 @@ public class Runner {
 		// TODO: ask about dependency injection + changing constructors + using factory to get around.
 		// TODO: ask about throwing IllegalArumgent exception - does this count as 'changing behaviour'.
 		
+		// TODO: make CallEventManager which groups incoming events as Calls when corresponding start and end events are received.
+		// -> separate this behaviour from BillingSystem which should not be concerned with call events (SRP).
+		
 		// Dependency injection.
 		// TODO: make factory to do this...
 		TariffLibrary tariffDatabase = CentralTariffDatabase.getInstance();

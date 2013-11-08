@@ -1,7 +1,10 @@
 package com.acmetelecom;
 
+import com.acmetelecom.customer.CentralCustomerDatabase;
+import com.acmetelecom.customer.CentralTariffDatabase;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.CustomerDatabase;
+import com.acmetelecom.customer.TariffLibrary;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -25,14 +28,23 @@ public class BillingSystem implements IBillingSystem {
     private CustomerDatabase customerDatabase;
     
     /**
-     * Constructor.
+     * Constructor. To ensure rest of system continues to work without changes.
+     */
+    public BillingSystem() {
+    	TariffLibrary tariffDatabase = CentralTariffDatabase.getInstance();
+		this.callCostCalculator = new CallCostCalculator(tariffDatabase, new DaytimePeakPeriod());
+		this.billGenerator = new HtmlBillGenerator(new HtmlBillPrinter());
+		this.customerDatabase = CentralCustomerDatabase.getInstance();
+    }
+    
+    /**
+     * Constructor. To be used for dependency injection.
      * @param callCostCalculator The call cost calculator to use when generating bills.
      * @param billGenerator The bill generator to use to generate bills.
      * @param customerDatabase The customer database to refer to for customer information.
      * @exception IllegalArgumentException If any of arguments are null.
      */
     public BillingSystem(ICallCostCalculator callCostCalculator, IBillGenerator billGenerator, CustomerDatabase customerDatabase) {
-    	// TODO: are we allowed to change constructor of BillingSystem? If not then need to change this -> use a factory class.
     	AssertionHelper.NotNull(callCostCalculator, "callCostCalculator");
     	AssertionHelper.NotNull(billGenerator, "billGenerator");
     	AssertionHelper.NotNull(customerDatabase, "customerDatabase");
