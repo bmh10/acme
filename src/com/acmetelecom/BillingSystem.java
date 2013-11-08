@@ -39,7 +39,6 @@ public class BillingSystem implements IBillingSystem {
     	this.callCostCalculator = callCostCalculator;
     	this.billGenerator = billGenerator;
     	this.customerDatabase = customerDatabase;
-    	MoneyFormatter.penceToPounds(null);
     }
 
     /**

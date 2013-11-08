@@ -62,6 +62,15 @@ public class CallCostCalculatorTests {
 	}
 	
 	/**
+	 * Tests that passing null parameters in to CallCostCalculator constructor.
+	 */
+	@Test
+	public void AttemptingToCreateCallCostCalculatorWithNullParametersThrowsInvalidArgumentException() {
+		exception.expect(IllegalArgumentException.class);
+		new CallCostCalculator(null, null);
+	}
+	
+	/**
 	 * Tests that passing null parameters in to calculateCallCost function throws an InvalidArgumentException.
 	 */
 	@Test

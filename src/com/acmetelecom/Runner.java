@@ -18,6 +18,9 @@ public class Runner {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Running...");
 		
+		// TODO: ask about dependency injection + changing constructors + using factory to get around.
+		// TODO: ask about throwing IllegalArumgent exception - does this count as 'changing behaviour'.
+		
 		// Dependency injection.
 		// TODO: make factory to do this...
 		TariffLibrary tariffDatabase = CentralTariffDatabase.getInstance();
