@@ -13,8 +13,11 @@ public abstract class CallEvent {
      * @param caller The caller's phone number.
      * @param callee The callee's phone number.
      * @param timeStamp The time this event occurred (in milliseconds since epoch).
+     * @exception IllegalArgumentException If any of arguments are null.
      */
     public CallEvent(String caller, String callee, long timeStamp) {
+    	AssertionHelper.NotNull(caller, "caller");
+    	AssertionHelper.NotNull(callee, "callee");
         this.caller = caller;
         this.callee = callee;
         this.time = timeStamp;

@@ -28,8 +28,10 @@ public class DaytimePeakPeriod {
 	/**
 	 * Gets the duration of a specified period in seconds.
 	 * @param period The period type to get the duration of.
+	 * @exception IllegalArgumentException If any of arguments are null.
 	 */
 	public int getPeriodDurationSeconds(DayPeriod period) {
+		AssertionHelper.NotNull(period, "period");
  		switch (period) {
  		case PrePeak:  return PeakStart * 60 * 60;
  		case Peak:     return (PeakEnd - PeakStart) * 60 * 60;
@@ -41,8 +43,11 @@ public class DaytimePeakPeriod {
 	/**
 	 * Gets the time of day (in seconds) at the end of a specified period.
 	 * @param period The period type to get the time of day for.
+	 * @exception IllegalArgumentException If any of arguments are null.
 	 */
  	public int getSecondInDayAtEndOfPeriod(DayPeriod period) {
+ 		AssertionHelper.NotNull(period, "period");
+ 		
  		int a = getPeriodDurationSeconds(DayPeriod.PrePeak);
  		int b = getPeriodDurationSeconds(DayPeriod.Peak);
  		int c = getPeriodDurationSeconds(DayPeriod.PrePeak);
@@ -60,8 +65,11 @@ public class DaytimePeakPeriod {
  	 * @param period The period of the day to get the pricing rate for.
  	 * @param tariff The tariff to get the pricing rate for.
  	 * @return The pricing rate as a BigDecimal.
+ 	 * @exception IllegalArgumentException If any of arguments are null.
  	 */
  	public BigDecimal getPeriodRate(DayPeriod period, Tariff tariff) {
+ 		AssertionHelper.NotNull(period, "period");
+ 		AssertionHelper.NotNull(tariff, "tariff");
  		switch (period) {
  		case PrePeak:  return tariff.offPeakRate();
  		case Peak:     return tariff.peakRate();
@@ -74,8 +82,10 @@ public class DaytimePeakPeriod {
  	 * Gets the DayPeriod associated with a specific time in the day.
  	 * @param time The time to get the DayPeriod for.
  	 * @return The DayPeriod associated with the provided time.
+ 	 * @exception IllegalArgumentException If any of arguments are null.
  	 */
 	public DayPeriod getPeriodOfDay(DateTime time) {
+		AssertionHelper.NotNull(time, "time");
 		int hour = time.getHourOfDay();
 		if (hour < PeakStart) return DayPeriod.PrePeak;
 		if (hour < PeakEnd) return DayPeriod.Peak;

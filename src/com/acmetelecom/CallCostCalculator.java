@@ -25,8 +25,11 @@ public class CallCostCalculator implements ICallCostCalculator {
 	 * Constructor.
 	 * @param tariffDatabase The tariff database to use when looking up customer's tariffs.
 	 * @param daytimePeakPeriod The DaytimePeakPeriod containing information about period timings.
+	 * @exception IllegalArgumentException If any of arguments are null.
 	 */
 	public CallCostCalculator(TariffLibrary tariffDatabase, DaytimePeakPeriod daytimePeakPeriod) {
+		AssertionHelper.NotNull(tariffDatabase, "tariffDatabase");
+		AssertionHelper.NotNull(daytimePeakPeriod, "daytimePeakPeriod");
 		this.tariffDatabase = tariffDatabase;
 		this.daytimePeakPeriod = daytimePeakPeriod;
 	}
@@ -35,6 +38,7 @@ public class CallCostCalculator implements ICallCostCalculator {
 	 * Calculates the cost of a the specified call for the specified customer.
 	 * @param customer The customer to calculate the call cost for (cost depends on which tariff they are on).
 	 * @param call The call to calculate the cost of.
+	 * @exception IllegalArgumentException If any of arguments are null.
 	 */
 	public BigDecimal calculateCallCost(Customer customer, Call call) {
 		AssertionHelper.NotNull(customer, "customer");

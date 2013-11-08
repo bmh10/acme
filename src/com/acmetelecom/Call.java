@@ -15,8 +15,11 @@ public class Call {
      * Constructor.
      * @param start The start of call event.
      * @param end The end of call event.
+     * @exception IllegalArgumentException If any of arguments are null.
      */
     public Call(CallEvent start, CallEvent end) {
+    	AssertionHelper.NotNull(start, "start");
+    	AssertionHelper.NotNull(end, "end");
         this.start = start;
         this.end = end;
     }

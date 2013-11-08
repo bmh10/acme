@@ -18,8 +18,12 @@ public class Bill {
 	 * @param customer The customer this bill is for.
 	 * @param calls A list of calls this customer has made.
 	 * @param totalBill The customer's total bill.
+	 * @exception IllegalArgumentException If any of arguments are null.
 	 */
 	public Bill(Customer customer, List<LineItem> calls, String totalBill) {
+		AssertionHelper.NotNull(customer, "customer");
+		AssertionHelper.NotNull(calls, "calls");
+		AssertionHelper.NotNull(totalBill, "totalBill");
 		this.customer = customer;
 		this.calls = calls;
 		this.totalBill = totalBill;

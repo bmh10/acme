@@ -29,20 +29,28 @@ public class BillingSystem implements IBillingSystem {
      * @param callCostCalculator The call cost calculator to use when generating bills.
      * @param billGenerator The bill generator to use to generate bills.
      * @param customerDatabase The customer database to refer to for customer information.
+     * @exception IllegalArgumentException If any of arguments are null.
      */
     public BillingSystem(ICallCostCalculator callCostCalculator, IBillGenerator billGenerator, CustomerDatabase customerDatabase) {
     	// TODO: are we allowed to change constructor of BillingSystem? If not then need to change this -> use a factory class.
+    	AssertionHelper.NotNull(callCostCalculator, "callCostCalculator");
+    	AssertionHelper.NotNull(billGenerator, "billGenerator");
+    	AssertionHelper.NotNull(customerDatabase, "customerDatabase");
     	this.callCostCalculator = callCostCalculator;
     	this.billGenerator = billGenerator;
     	this.customerDatabase = customerDatabase;
+    	MoneyFormatter.penceToPounds(null);
     }
 
     /**
      * Called when a call is started.
      * @param caller The caller phone number.
      * @param callee The callee phone number.
+     * @exception IllegalArgumentException If any of arguments are null.
      */
     public void callInitiated(String caller, String callee) {
+    	AssertionHelper.NotNull(caller, "caller");
+    	AssertionHelper.NotNull(callee, "callee");
     	log.info("Call started: from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
     	addEventToLog(caller, new CallStart(caller, callee, DateTime.now()));
     }
@@ -51,8 +59,11 @@ public class BillingSystem implements IBillingSystem {
      * Called when a call is ended.
      * @param caller The caller phone number.
      * @param callee The callee phone number.
+     * @exception IllegalArgumentException If any of arguments are null.
      */
     public void callCompleted(String caller, String callee) {
+    	AssertionHelper.NotNull(caller, "caller");
+    	AssertionHelper.NotNull(callee, "callee");
     	log.info("Call ended: from '" + caller + "' to '" + callee + "' at " + DateTime.now().toString());
     	addEventToLog(caller, new CallEnd(caller, callee, DateTime.now()));
     }

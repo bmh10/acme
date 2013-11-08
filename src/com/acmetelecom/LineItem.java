@@ -14,8 +14,11 @@ public class LineItem {
      * Constructor.
      * @param call The call.
      * @param callCost The cost of the call.
+     * @exception IllegalArgumentException If any of arguments are null.
      */
     public LineItem(Call call, BigDecimal callCost) {
+    	AssertionHelper.NotNull(call, "call");
+    	AssertionHelper.NotNull(callCost, "callCost");
         this.call = call;
         this.callCost = callCost;
     }

@@ -10,8 +10,13 @@ public class HtmlBillPrinter implements IBillPrinter {
 	 * @param name The customer name to include in the heading.
 	 * @param phoneNumber The customer's phone number.
 	 * @param pricePlan The customer's price plan/tariff.
+	 * @exception IllegalArgumentException If any of arguments are null.
 	 */
     public void printHeading(String name, String phoneNumber, String pricePlan) {
+    	AssertionHelper.NotNull(name, "name");
+    	AssertionHelper.NotNull(phoneNumber, "phoneNumber");
+    	AssertionHelper.NotNull(pricePlan, "pricePlan");
+    	
         beginHtml();
         System.out.println(h2(name + "/" + phoneNumber + " - " + "Price Plan: " + pricePlan));
         beginTable();
@@ -23,16 +28,25 @@ public class HtmlBillPrinter implements IBillPrinter {
      * @param callee The receiver's phone number.
      * @param duration The call duration.
      * @param cost The call cost.
+     * @exception IllegalArgumentException If any of arguments are null.
      */
     public void printItem(String time, String callee, String duration, String cost) {
+    	AssertionHelper.NotNull(time, "time");
+    	AssertionHelper.NotNull(callee, "callee");
+    	AssertionHelper.NotNull(duration, "duration");
+    	AssertionHelper.NotNull(cost, "cost");
+    	
         System.out.println(tr(td(time) + td(callee) + td(duration) + td(cost)));
     }
     
     /**
      * Prints the total cost at the bottom of the HTML bill.
      * @param total The bill total cost.
+     * @exception IllegalArgumentException If any of arguments are null.
      */
     public void printTotal(String total) {
+    	AssertionHelper.NotNull(total, "total");
+    	
         endTable();
         System.out.println(h2("Total: " + total));
         endHtml();

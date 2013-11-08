@@ -13,7 +13,7 @@ public class AssertionHelper {
 	 */
 	public static void NotNull(Object o, String paramName) {
 		if (o == null) {
-			throw new IllegalArgumentException(paramName + " cannot be null.");
+			throw new IllegalArgumentException("'" + paramName + "' cannot be null.");
 		}
 	}
 }
