@@ -25,7 +25,8 @@ public class Runner {
 		CallCostCalculator callCostCalculator = new CallCostCalculator(tariffDatabase, new DaytimePeakPeriod());
 		HtmlBillGenerator billGenerator = new HtmlBillGenerator(new HtmlBillPrinter());
 		
-		BillingSystem billingSystem = new BillingSystem(callCostCalculator, billGenerator, customerDatabase);
+		BillingSystem billingSystem = new BillingSystemFactory().create(); 
+		//new BillingSystem(callCostCalculator, billGenerator, customerDatabase);
 		
 		billingSystem.callInitiated("447711232343", "447766511332");
 		sleepSeconds(2);

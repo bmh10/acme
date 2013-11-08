@@ -34,13 +34,10 @@ public class CallCostCalculatorTests {
 	final String dummyCalleeNumber = "440000000001";
 	final String dummyCustomerName = "DummyName";
 	
-	int peakPeriodStart;
-	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 	
 	Mockery context;
-	
 	TariffLibrary mockTariffLibrary;
 	
 	// Don't want to mock this as it is essential part of calculation.
@@ -49,6 +46,9 @@ public class CallCostCalculatorTests {
 	// Instance across which tests are to be applied.
 	CallCostCalculator callCostCalculator;
 	
+	/**
+	 * Setup which is run before each unit test.
+	 */
 	@Before
 	public void setup() {
 		context = new Mockery();
@@ -57,12 +57,18 @@ public class CallCostCalculatorTests {
 		callCostCalculator = new CallCostCalculator(mockTariffLibrary, daytimePeakPeriod);
 	}
 	
+	/**
+	 * Tests that passing null parameters in to calculateCallCost function throws an InvalidArgumentException.
+	 */
 	@Test
 	public void AttemptingToCalculateCallCostWithNullParametersThrowsInvalidArgumentException() {
 		exception.expect(IllegalArgumentException.class);
 		callCostCalculator.calculateCallCost(null, null);
 	}
 	
+	/**
+	 * Tests that a call which starts and ends within same peak period is charged correctly.
+	 */
 	@Test
 	public void CallThatStartsAndEndsInSamePeakPeriodIsChargedCorrectly() {
 		// Setup.
@@ -82,6 +88,9 @@ public class CallCostCalculatorTests {
 		assertTrue(result.equals(expectedCost));
 	}
 	
+	/**
+	 * Tests that call which starts and ends in same off-peak period is charged correctly.
+	 */
 	@Test
 	public void CallThatStartsAndEndsInSameOffPeakPeriodIsChargedCorrectly() {
 		// Setup.
@@ -101,6 +110,9 @@ public class CallCostCalculatorTests {
 		assertTrue(result.equals(expectedCost));
 	}
 	
+	/**
+	 * Tests that call which starts in off-peak period and ends in next peak period is charged correctly.
+	 */
 	@Test
 	public void CallThatStartsInOffPeakPeriodAndEndsInPeakPeriodOnSameDayIsChargedCorrectly() {
 		// Setup.
@@ -122,6 +134,9 @@ public class CallCostCalculatorTests {
 		assertTrue(result.equals(expectedTotalCost));
 	}
 	
+	/**
+	 * Tests that call which starts in peak period and ends in next off-peak period is charged correctly.
+	 */
 	@Test
 	public void CallThatStartsInPeakPeriodAndEndsInOffPeakPeriodOnSameDayIsChargedCorrectly() {
 		// Setup.

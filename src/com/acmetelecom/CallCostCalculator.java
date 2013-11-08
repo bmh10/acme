@@ -57,6 +57,7 @@ public class CallCostCalculator implements ICallCostCalculator {
         boolean firstPeriod = true;
         boolean done = false;
         
+        // Goes through each period between start and end of call, summing cost progressively.
         while (!done) {
         	int currentDay = currentTime.getDayOfYear();
         	currentPeriod = daytimePeakPeriod.getPeriodOfDay(currentTime);
