@@ -21,6 +21,7 @@ public class CallEventManager implements ICallEventManager {
 	 * Handles incoming call events. If finds a start and end event for a particular call then groups them together into
 	 * a single Call object and stores it in call logs.
 	 * @param event The incoming call event to handle.
+	 * @exception IllegalArgumentException If any of arguments are null.
 	 */
 	public void handleEvent(CallEvent event) {
 		AssertionHelper.NotNull(event, "event");
@@ -38,17 +39,27 @@ public class CallEventManager implements ICallEventManager {
 				    callStarts.remove(startEvent);
 				    callsInProgress.put(caller, callStarts);
 				    addCallToLog(new Call(startEvent, event));
+				    return;
 			  }
 			}
+			
+			System.out.println("No matching start call event was found for this end call event - ");
 		}
 	}
 	
 	/**
 	 * Gets the call logs for a particular customer.
 	 * @param caller The caller the get call logs for.
+	 * @exception IllegalArgumentException If any of arguments are null.
 	 */
 	public List<Call> getCallsForCustomer(String caller) {
-		return callLog.get(caller);
+		AssertionHelper.NotNull(caller, "caller");
+		List<Call> calls = callLog.get(caller);
+		if (calls == null) {
+			return new ArrayList<Call>();
+		}
+		
+		return calls;
 	}
 	
 	/**

@@ -7,14 +7,14 @@ import com.acmetelecom.customer.Customer;
  */
 public class HtmlBillGenerator implements IBillGenerator {
 
-	HtmlBillPrinter printer;
+	IBillPrinter printer;
 	
 	/**
 	 * Constructor.
-	 * @param printer The HTML printer to use when generating the bill.
+	 * @param printer The printer to use when generating the bill.
 	 * @exception IllegalArgumentException If any of arguments are null.
 	 */
-	public HtmlBillGenerator(HtmlBillPrinter printer) {
+	public HtmlBillGenerator(IBillPrinter printer) {
 		AssertionHelper.NotNull(printer, "printer");
 		this.printer = printer;
 	}
