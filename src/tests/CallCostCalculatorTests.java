@@ -62,7 +62,7 @@ public class CallCostCalculatorTests {
 	}
 	
 	/**
-	 * Tests that passing null parameters in to CallCostCalculator constructor.
+	 * Tests that passing null parameters in to CallCostCalculator constructor throws IllegalArgumentException.
 	 */
 	@Test
 	public void AttemptingToCreateCallCostCalculatorWithNullParametersThrowsInvalidArgumentException() {
@@ -100,6 +100,7 @@ public class CallCostCalculatorTests {
 			BigDecimal expectedCost = new BigDecimal(callLengthMins*60).multiply(tariff.peakRate());
 			expectedCost = expectedCost.setScale(0, RoundingMode.HALF_UP);
 			assertTrue(result.equals(expectedCost));
+			context.assertIsSatisfied();
 		}
 	}
 	
@@ -124,6 +125,7 @@ public class CallCostCalculatorTests {
 			BigDecimal expectedCost = new BigDecimal(callLengthMins*60).multiply(tariff.offPeakRate());
 			expectedCost = expectedCost.setScale(0, RoundingMode.HALF_UP);
 			assertTrue(result.equals(expectedCost));
+			context.assertIsSatisfied();
 		}
 	}
 	
@@ -150,6 +152,7 @@ public class CallCostCalculatorTests {
 			BigDecimal expectedTotalCost = expectedOffPeakCost.add(new BigDecimal(peakTime*60).multiply(tariff.peakRate()));
 			expectedTotalCost = expectedTotalCost.setScale(0, RoundingMode.HALF_UP);
 			assertTrue(result.equals(expectedTotalCost));
+			context.assertIsSatisfied();
 		}
 	}
 	
@@ -176,6 +179,7 @@ public class CallCostCalculatorTests {
 			BigDecimal expectedTotalCost = expectedOffPeakCost.add(new BigDecimal(peakTime*60).multiply(tariff.peakRate()));
 			expectedTotalCost = expectedTotalCost.setScale(0, RoundingMode.HALF_UP);
 			assertTrue(result.equals(expectedTotalCost));
+			context.assertIsSatisfied();
 		}
 	}
 	
@@ -208,6 +212,7 @@ public class CallCostCalculatorTests {
 			BigDecimal expectedTotalCost = expectedOffPeakCost.add(expectedPeakCost);
 			expectedTotalCost = expectedTotalCost.setScale(0, RoundingMode.HALF_UP);
 			assertTrue(result.equals(expectedTotalCost));
+			context.assertIsSatisfied();
 		}
 	}
 	
@@ -237,6 +242,7 @@ public class CallCostCalculatorTests {
 			BigDecimal expectedTotalCost = expectedOffPeakCost.add(expectedPeakCost);
 			expectedTotalCost = expectedTotalCost.setScale(0, RoundingMode.HALF_UP);
 			assertTrue(result.equals(expectedTotalCost));
+			context.assertIsSatisfied();
 		}
 	}
 	
@@ -266,6 +272,7 @@ public class CallCostCalculatorTests {
 			BigDecimal expectedTotalCost = expectedOffPeakCost.add(expectedPeakCost);
 			expectedTotalCost = expectedTotalCost.setScale(0, RoundingMode.HALF_UP);
 			assertTrue(result.equals(expectedTotalCost));
+			context.assertIsSatisfied();
 		}
 	}
 	
@@ -292,6 +299,7 @@ public class CallCostCalculatorTests {
 			BigDecimal expectedTotalCost = expectedOffPeakCost.add(new BigDecimal(peakSeconds).multiply(tariff.peakRate()));
 			expectedTotalCost = expectedTotalCost.setScale(0, RoundingMode.HALF_UP);
 			assertTrue(result.equals(expectedTotalCost));
+			context.assertIsSatisfied();
 		}
 	}
 

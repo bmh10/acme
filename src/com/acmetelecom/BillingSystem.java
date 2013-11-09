@@ -58,6 +58,7 @@ public class BillingSystem implements IBillingSystem {
      * Called when a call is started.
      * @param caller The caller phone number.
      * @param callee The callee phone number.
+     * @exception IllegalArgumentException If any of arguments are null.
      */
     public void callInitiated(String caller, String callee) {
     	this.callEventManager.handleEvent(new CallStart(caller, callee, DateTime.now()));
@@ -67,6 +68,7 @@ public class BillingSystem implements IBillingSystem {
      * Called when a call is ended.
      * @param caller The caller phone number.
      * @param callee The callee phone number.
+     * @exception IllegalArgumentException If any of arguments are null.
      */
     public void callCompleted(String caller, String callee) {
     	this.callEventManager.handleEvent(new CallEnd(caller, callee, DateTime.now()));
