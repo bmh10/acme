@@ -4,7 +4,7 @@ import org.joda.time.DateTime;
 
 import com.acmetelecom.IClock;
 
-public class DummyClock implements IClock {
+class DummyClock implements IClock {
 
 	private DateTime time;
 	

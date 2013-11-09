@@ -302,8 +302,6 @@ public class CallCostCalculatorTests {
 			context.assertIsSatisfied();
 		}
 	}
-
-	// --- Setup Methods --- //
 	
 	/**
 	 * Creates a call between the specified times using the dummy customers.
