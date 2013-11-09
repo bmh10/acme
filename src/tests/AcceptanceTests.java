@@ -179,6 +179,39 @@ public class AcceptanceTests {
 	}
 	
 	/**
+	 * Tests that all calls are logged when the billing system receives a large number of calls.
+	 */
+	@Test
+	public void TestAllCallsAreLoggedWhenSystemReceivesLargeNumberOfCalls() {
+		
+		// Run simulation for 300ms.
+		long end = System.currentTimeMillis() + 300;
+		int callsMade = 0;
+		while (System.currentTimeMillis() < end) {
+			Customer c1 = getRandomCustomer();
+			Customer c2 = getRandomCustomer();
+			
+			// Call can be up to 2 days.
+			int callDuration = rand.nextInt(48*60);
+			DateTime callStartTime = getRandomDate();
+			DateTime callEndTime = callStartTime.plusMinutes(callDuration);
+			
+			simulateCall(c1, c2, callStartTime, callEndTime);
+			callsMade++;
+		}
+		
+		ArrayList<Bill> bills = billingSystem.createCustomerBills();
+		assertTrue(bills.size() == dummyCustomers.size());
+		int callsLogged = 0;
+		for (Bill bill : bills) {
+			callsLogged += bill.GetCalls().size();
+		}
+
+		assertTrue(callsMade == callsLogged);
+		System.out.println("CALLS MADE: " + callsMade);
+	}
+	
+	/**
 	 * Simulates a single call and checks the bill against the expected call cost and duration.
 	 * @param c1 The caller.
 	 * @param c2 The callee.
@@ -195,10 +228,7 @@ public class AcceptanceTests {
 			int callDurationMins,
 			BigDecimal expectedCallCost) {
 		
-		clock.setTime(callStartTime);
-		billingSystem.callInitiated(c1.getPhoneNumber(), c2.getPhoneNumber());
-		clock.setTime(callEndTime);
-		billingSystem.callCompleted(c1.getPhoneNumber(), c2.getPhoneNumber());
+		simulateCall(c1, c2, callStartTime, callEndTime);
 		
 		ArrayList<Bill> bills = billingSystem.createCustomerBills();
 		assertTrue(bills.size() == dummyCustomers.size());
@@ -220,6 +250,13 @@ public class AcceptanceTests {
 		fail("No bill found for call.");
 	}
 	
+	private void simulateCall(Customer c1, Customer c2, DateTime callStartTime, DateTime callEndTime) {
+		clock.setTime(callStartTime);
+		billingSystem.callInitiated(c1.getPhoneNumber(), c2.getPhoneNumber());
+		clock.setTime(callEndTime);
+		billingSystem.callCompleted(c1.getPhoneNumber(), c2.getPhoneNumber());
+	}
+	
 	/**
 	 * Gets a random customer from customer database.
 	 * @return The Customer object.
@@ -238,5 +275,9 @@ public class AcceptanceTests {
 		if (rand < 0.33) return Tariff.Standard;
 		if (rand < 0.66) return Tariff.Leisure;
 		return Tariff.Business;
+	}
+	
+	private DateTime getRandomDate() {
+	    return new DateTime(2013, 1, 1, 0, 0).plusSeconds(rand.nextInt(365*24*60*60));
 	}
 }
