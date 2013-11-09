@@ -10,8 +10,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Logger;
 
-import org.joda.time.DateTime;
-
 /**
  * High-level billing system logic, concerned with storing call events and creating customer bills.
  */
@@ -22,6 +20,7 @@ public class BillingSystem implements IBillingSystem {
     private ICallEventManager callEventManager;
     private ICallCostCalculator callCostCalculator;
     private IBillGenerator billGenerator;
+    private IClock clock;
     private CustomerDatabase customerDatabase;
     
     /**
@@ -33,6 +32,7 @@ public class BillingSystem implements IBillingSystem {
 		this.callCostCalculator = new CallCostCalculator(tariffDatabase, new DaytimePeakPeriod());
 		this.billGenerator = new HtmlBillGenerator(new HtmlBillPrinter());
 		this.customerDatabase = CentralCustomerDatabase.getInstance();
+		this.clock = new Clock();
     }
     
     /**
@@ -43,15 +43,22 @@ public class BillingSystem implements IBillingSystem {
      * @param customerDatabase The customer database to refer to for customer information.
      * @exception IllegalArgumentException If any of arguments are null.
      */
-    public BillingSystem(ICallEventManager callEventManager, ICallCostCalculator callCostCalculator, IBillGenerator billGenerator, CustomerDatabase customerDatabase) {
+    public BillingSystem(
+    		ICallEventManager callEventManager,
+    		ICallCostCalculator callCostCalculator,
+    		IBillGenerator billGenerator,
+    		CustomerDatabase customerDatabase,
+    		IClock clock) {
     	AssertionHelper.NotNull(callEventManager, "callEventManager");
     	AssertionHelper.NotNull(callCostCalculator, "callCostCalculator");
     	AssertionHelper.NotNull(billGenerator, "billGenerator");
     	AssertionHelper.NotNull(customerDatabase, "customerDatabase");
+    	AssertionHelper.NotNull(clock, "clock");
     	this.callEventManager = callEventManager;
     	this.callCostCalculator = callCostCalculator;
     	this.billGenerator = billGenerator;
     	this.customerDatabase = customerDatabase;
+    	this.clock = clock;
     }
 
     /**
@@ -61,7 +68,7 @@ public class BillingSystem implements IBillingSystem {
      * @exception IllegalArgumentException If any of arguments are null.
      */
     public void callInitiated(String caller, String callee) {
-    	this.callEventManager.handleEvent(new CallStart(caller, callee, DateTime.now()));
+    	callEventManager.handleEvent(new CallStart(caller, callee, clock.now()));
     }
 
     /**
@@ -71,17 +78,8 @@ public class BillingSystem implements IBillingSystem {
      * @exception IllegalArgumentException If any of arguments are null.
      */
     public void callCompleted(String caller, String callee) {
-    	this.callEventManager.handleEvent(new CallEnd(caller, callee, DateTime.now()));
+    	callEventManager.handleEvent(new CallEnd(caller, callee, clock.now()));
     }
-    
-    // TODO: better way to do this.
-//    public void callInitiatedAtTime(String caller, String callee, DateTime time) {
-//    	addEventToLog(caller, new CallStart(caller, callee, time));
-//    }
-//
-//    public void callCompletedAtTime(String caller, String callee, DateTime time) {
-//    	addEventToLog(caller, new CallEnd(caller, callee, time));
-//    }
 
     /**
      * Creates bills for all customers, prints them out and returns them as a list of type Bill.
@@ -96,7 +94,7 @@ public class BillingSystem implements IBillingSystem {
             customerBills.add(bill);
         }
         
-        this.callEventManager.clearCallLogs();
+        callEventManager.clearCallLogs();
         return customerBills;
     }
 
@@ -108,7 +106,7 @@ public class BillingSystem implements IBillingSystem {
     private Bill createBillFor(Customer customer) {
     	BigDecimal totalBill = new BigDecimal(0);
         List<LineItem> items = new ArrayList<LineItem>();
-        List<Call> calls = this.callEventManager.getCallsForCustomer(customer.getPhoneNumber());
+        List<Call> calls = callEventManager.getCallsForCustomer(customer.getPhoneNumber());
         
         if (calls == null) {
         	return new Bill(customer, items, MoneyFormatter.penceToPounds(totalBill));

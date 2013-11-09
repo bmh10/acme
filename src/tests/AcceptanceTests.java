@@ -15,6 +15,7 @@ import com.acmetelecom.Bill;
 import com.acmetelecom.BillingSystem;
 import com.acmetelecom.CallCostCalculator;
 import com.acmetelecom.CallEvent;
+import com.acmetelecom.CallEventManager;
 import com.acmetelecom.DaytimePeakPeriod;
 import com.acmetelecom.HtmlBillGenerator;
 import com.acmetelecom.HtmlBillPrinter;
@@ -29,7 +30,6 @@ import com.acmetelecom.customer.TariffLibrary;
 /**
  * Acceptance tests which ensure that the new criteria for call charging are met.
  * Does not use interface mocking as the idea is to test the system under normal running conditions.
- * @author Ben
  */
 public class AcceptanceTests {
 	
@@ -60,11 +60,12 @@ public class AcceptanceTests {
 		// Dependency injection into BillingSystem.
 		CustomerDatabase customerDatabase = new DummyCustomerDatabase(dummyCustomers);
 		TariffLibrary tariffDatabase = new DummyTariffDatabase(dummyCustomers);
-		
-		HtmlBillGenerator billGenerator = new HtmlBillGenerator(new HtmlBillPrinter());
-		CallCostCalculator callCostCalculator = new CallCostCalculator(tariffDatabase, new DaytimePeakPeriod());
 
-		this.billingSystem = new BillingSystem();
+		CallEventManager callEventManager = new CallEventManager();
+		CallCostCalculator callCostCalculator = new CallCostCalculator(tariffDatabase, new DaytimePeakPeriod());
+		HtmlBillGenerator billGenerator = new HtmlBillGenerator(new HtmlBillPrinter());
+
+		this.billingSystem = new BillingSystem(callEventManager, callCostCalculator, billGenerator, customerDatabase);
 	}
 	
 	@Test

@@ -19,6 +19,7 @@ import com.acmetelecom.BillingSystem;
 import com.acmetelecom.Call;
 import com.acmetelecom.CallEnd;
 import com.acmetelecom.CallStart;
+import com.acmetelecom.Clock;
 import com.acmetelecom.IBillGenerator;
 import com.acmetelecom.ICallCostCalculator;
 import com.acmetelecom.ICallEventManager;
@@ -56,7 +57,8 @@ public class BillingSystemTests {
 		mockCallCostCalculator = context.mock(ICallCostCalculator.class);
 		mockBillGenerator = context.mock(IBillGenerator.class);
 		mockCustomerDatabase = context.mock(CustomerDatabase.class);
-		billingSystem = new BillingSystem(mockCallEventManager, mockCallCostCalculator, mockBillGenerator, mockCustomerDatabase);
+		billingSystem = 
+				new BillingSystem(mockCallEventManager, mockCallCostCalculator, mockBillGenerator, mockCustomerDatabase, new Clock());
 	}
 	
 	/**
@@ -65,7 +67,7 @@ public class BillingSystemTests {
 	@Test
 	public void attemptingToCreateBillingSystemWithNullParametersThrowsIllegalArgumentException() {
 		exception.expect(IllegalArgumentException.class);
-		new BillingSystem(null, null, null, null);
+		new BillingSystem(null, null, null, null, null);
 	}
 	
 	/**
