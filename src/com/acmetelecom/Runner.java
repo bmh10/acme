@@ -1,10 +1,5 @@
 package com.acmetelecom;
 
-import com.acmetelecom.customer.CentralCustomerDatabase;
-import com.acmetelecom.customer.CentralTariffDatabase;
-import com.acmetelecom.customer.CustomerDatabase;
-import com.acmetelecom.customer.TariffLibrary;
-
 /**
  * Entry point for billing system, for testing purposes.
  */

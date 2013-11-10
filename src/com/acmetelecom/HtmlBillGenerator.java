@@ -7,7 +7,7 @@ import com.acmetelecom.customer.Customer;
  */
 public class HtmlBillGenerator implements IBillGenerator {
 
-	IBillPrinter printer;
+	private IBillPrinter printer;
 	
 	/**
 	 * Constructor.
@@ -35,5 +35,4 @@ public class HtmlBillGenerator implements IBillGenerator {
         
         printer.printTotal(bill.GetTotalBill());
     }
-
 }

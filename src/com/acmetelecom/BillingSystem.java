@@ -68,6 +68,7 @@ public class BillingSystem implements IBillingSystem {
      * @exception IllegalArgumentException If any of arguments are null.
      */
     public void callInitiated(String caller, String callee) {
+    	//log.info("Call initiated:  );
     	callEventManager.handleEvent(new CallStart(caller, callee, clock.now()));
     }
 

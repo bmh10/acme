@@ -208,7 +208,6 @@ public class AcceptanceTests {
 		}
 
 		assertTrue(callsMade == callsLogged);
-		System.out.println("CALLS MADE: " + callsMade);
 	}
 	
 	/**
@@ -250,6 +249,13 @@ public class AcceptanceTests {
 		fail("No bill found for call.");
 	}
 	
+	/**
+	 * Simulates a call for specified customers and times.
+	 * @param c1 The caller.
+	 * @param c2 The callee.
+	 * @param callStartTime The call start time.
+	 * @param callEndTime The call end time.
+	 */
 	private void simulateCall(Customer c1, Customer c2, DateTime callStartTime, DateTime callEndTime) {
 		clock.setTime(callStartTime);
 		billingSystem.callInitiated(c1.getPhoneNumber(), c2.getPhoneNumber());

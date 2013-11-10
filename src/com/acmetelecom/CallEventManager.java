@@ -99,5 +99,4 @@ public class CallEventManager implements ICallEventManager {
     	calls.add(call);
         callLog.put(caller, calls);
     }
-	
 }
