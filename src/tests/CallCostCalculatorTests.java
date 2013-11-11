@@ -19,6 +19,7 @@ import com.acmetelecom.CallCostCalculator;
 import com.acmetelecom.CallEnd;
 import com.acmetelecom.CallStart;
 import com.acmetelecom.DaytimePeakPeriod;
+import com.acmetelecom.FileLogger;
 import com.acmetelecom.DaytimePeakPeriod.DayPeriod;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.Tariff;
@@ -59,6 +60,7 @@ public class CallCostCalculatorTests {
 		for (Tariff t : Tariff.values()) {
 			tariffTypes.add(t);
 		}
+		FileLogger.setActive(false);
 	}
 	
 	/**

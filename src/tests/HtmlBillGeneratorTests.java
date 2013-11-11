@@ -16,6 +16,7 @@ import com.acmetelecom.Bill;
 import com.acmetelecom.Call;
 import com.acmetelecom.CallEnd;
 import com.acmetelecom.CallStart;
+import com.acmetelecom.FileLogger;
 import com.acmetelecom.HtmlBillGenerator;
 import com.acmetelecom.IBillPrinter;
 import com.acmetelecom.LineItem;
@@ -48,6 +49,7 @@ public class HtmlBillGeneratorTests {
 		context = new Mockery();
 		mockBillPrinter = context.mock(IBillPrinter.class);
 		htmlBillGenerator = new HtmlBillGenerator(mockBillPrinter);
+		FileLogger.setActive(false);
 	}
 	
 	/**

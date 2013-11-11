@@ -18,6 +18,7 @@ import com.acmetelecom.BillingSystem;
 import com.acmetelecom.CallCostCalculator;
 import com.acmetelecom.CallEventManager;
 import com.acmetelecom.DaytimePeakPeriod;
+import com.acmetelecom.FileLogger;
 import com.acmetelecom.HtmlBillGenerator;
 import com.acmetelecom.HtmlBillPrinter;
 import com.acmetelecom.IBillingSystem;
@@ -72,6 +73,7 @@ public class AcceptanceTests {
 		this.clock = new DummyClock();
 
 		this.billingSystem = new BillingSystem(callEventManager, callCostCalculator, billGenerator, customerDatabase, clock);
+		FileLogger.setActive(false);
 	}
 	
 	/**

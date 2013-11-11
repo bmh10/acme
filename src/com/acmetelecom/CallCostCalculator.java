@@ -2,7 +2,6 @@ package com.acmetelecom;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.logging.Logger;
 
 import org.joda.time.*;
 
@@ -18,8 +17,6 @@ public class CallCostCalculator implements ICallCostCalculator {
 
 	private DaytimePeakPeriod daytimePeakPeriod;
 	private TariffLibrary tariffDatabase;
-	
-	private Logger log = Logger.getLogger(CallCostCalculator.class.getSimpleName());
 	
 	/**
 	 * Constructor.

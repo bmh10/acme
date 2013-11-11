@@ -20,6 +20,7 @@ import com.acmetelecom.Call;
 import com.acmetelecom.CallEnd;
 import com.acmetelecom.CallStart;
 import com.acmetelecom.Clock;
+import com.acmetelecom.FileLogger;
 import com.acmetelecom.IBillGenerator;
 import com.acmetelecom.ICallCostCalculator;
 import com.acmetelecom.ICallEventManager;
@@ -59,6 +60,7 @@ public class BillingSystemTests {
 		mockCustomerDatabase = context.mock(CustomerDatabase.class);
 		billingSystem = 
 				new BillingSystem(mockCallEventManager, mockCallCostCalculator, mockBillGenerator, mockCustomerDatabase, new Clock());
+		FileLogger.setActive(false);
 	}
 	
 	/**

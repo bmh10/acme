@@ -14,6 +14,7 @@ import com.acmetelecom.Call;
 import com.acmetelecom.CallEnd;
 import com.acmetelecom.CallEventManager;
 import com.acmetelecom.CallStart;
+import com.acmetelecom.FileLogger;
 
 /**
  * Tests behaviour of CallEventManager in an isolated context.
@@ -35,6 +36,7 @@ public class CallEventManagerTests {
 	@Before
 	public void setup() {
 		callEventManager = new CallEventManager();
+		FileLogger.setActive(false);
 	}
 	
 	/**

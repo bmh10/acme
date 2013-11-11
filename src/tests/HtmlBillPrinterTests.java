@@ -5,6 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.acmetelecom.FileLogger;
 import com.acmetelecom.HtmlBillPrinter;
 
 /**
@@ -29,6 +30,7 @@ public class HtmlBillPrinterTests {
 	@Before
 	public void setup() {
 		htmlBillPrinter = new HtmlBillPrinter();
+		FileLogger.setActive(false);
 	}
 	
 	/**

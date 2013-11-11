@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class BillingSystem implements IBillingSystem {
 
-	static Logger log = Logger.getLogger(BillingSystem.class.getSimpleName());
+	private Logger log = FileLogger.create();
 	
     private ICallEventManager callEventManager;
     private ICallCostCalculator callCostCalculator;
@@ -68,7 +68,7 @@ public class BillingSystem implements IBillingSystem {
      * @exception IllegalArgumentException If any of arguments are null.
      */
     public void callInitiated(String caller, String callee) {
-    	//log.info("Call initiated:  );
+    	log.info("Call from " + caller + " to " + callee + " initiated.");
     	callEventManager.handleEvent(new CallStart(caller, callee, clock.now()));
     }
 
@@ -79,6 +79,7 @@ public class BillingSystem implements IBillingSystem {
      * @exception IllegalArgumentException If any of arguments are null.
      */
     public void callCompleted(String caller, String callee) {
+    	log.info("Call from " + caller + " to " + callee + " initiated.");
     	callEventManager.handleEvent(new CallEnd(caller, callee, clock.now()));
     }
 
@@ -89,6 +90,7 @@ public class BillingSystem implements IBillingSystem {
     public ArrayList<Bill> createCustomerBills() {
         List<Customer> customers = customerDatabase.getCustomers();
         ArrayList<Bill> customerBills = new ArrayList<Bill>();
+        log.info("About to create " + customers.size() + " customer bills.");
         
         for (Customer customer : customers) {
             Bill bill = createBillFor(customer);
@@ -96,6 +98,7 @@ public class BillingSystem implements IBillingSystem {
         }
         
         callEventManager.clearCallLogs();
+        log.info("All customer bills created and call logs cleared.");
         return customerBills;
     }
 
