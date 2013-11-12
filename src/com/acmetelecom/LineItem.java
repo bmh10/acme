@@ -2,7 +2,6 @@ package com.acmetelecom;
 
 import java.math.BigDecimal;
 
-// TODO: why was this previously static and put in same file as BillingSystem?
 /**
  * Represents an call item to be put in a customer's bill.
  */

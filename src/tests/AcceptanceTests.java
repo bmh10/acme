@@ -22,9 +22,9 @@ import com.acmetelecom.FileLogger;
 import com.acmetelecom.HtmlBillGenerator;
 import com.acmetelecom.HtmlBillPrinter;
 import com.acmetelecom.IBillingSystem;
+import com.acmetelecom.IPeakPeriod.DayPeriod;
 import com.acmetelecom.LineItem;
 import com.acmetelecom.MoneyFormatter;
-import com.acmetelecom.DaytimePeakPeriod.DayPeriod;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.CustomerDatabase;
 import com.acmetelecom.customer.Tariff;
@@ -89,7 +89,7 @@ public class AcceptanceTests {
 		BigDecimal expectedCallCost = new BigDecimal(callDurationMins*60).multiply(tariff.peakRate());
 		expectedCallCost = expectedCallCost.setScale(0, RoundingMode.HALF_UP);
 		
-		DateTime callStartTime = new DateTime(2013, 11, 4, daytimePeakPeriod.PeakStart, 54, 30);
+		DateTime callStartTime = new DateTime(2013, 11, 4, daytimePeakPeriod.getPeakStart(), 54, 30);
 		DateTime callEndTime = callStartTime.plusMinutes(callDurationMins);
 		
 		simulateSingleCallAndCheckBill(c1, c2, callStartTime, callEndTime, callDurationMins, expectedCallCost);
@@ -108,7 +108,7 @@ public class AcceptanceTests {
 		BigDecimal expectedCallCost = new BigDecimal(callDurationMins*60).multiply(tariff.offPeakRate());
 		expectedCallCost = expectedCallCost.setScale(0, RoundingMode.HALF_UP);
 		
-		DateTime callStartTime = new DateTime(2013, 11, 4, daytimePeakPeriod.PeakEnd, 54, 30);
+		DateTime callStartTime = new DateTime(2013, 11, 4, daytimePeakPeriod.getPeakEnd(), 54, 30);
 		DateTime callEndTime = callStartTime.plusMinutes(callDurationMins);
 		
 		simulateSingleCallAndCheckBill(c1, c2, callStartTime, callEndTime, callDurationMins, expectedCallCost);
@@ -129,7 +129,7 @@ public class AcceptanceTests {
 				.add(new BigDecimal(peakDuration*60).multiply(tariff.peakRate()));
 		expectedCallCost = expectedCallCost.setScale(0, RoundingMode.HALF_UP);
 		
-		DateTime callStartTime = new DateTime(2013, 11, 4, daytimePeakPeriod.PeakStart-1, 60 - offPeakDuration);
+		DateTime callStartTime = new DateTime(2013, 11, 4, daytimePeakPeriod.getPeakStart()-1, 60 - offPeakDuration);
 		DateTime callEndTime = callStartTime.plusMinutes(offPeakDuration + peakDuration);
 		
 		simulateSingleCallAndCheckBill(c1, c2, callStartTime, callEndTime, offPeakDuration + peakDuration, expectedCallCost);
@@ -150,7 +150,7 @@ public class AcceptanceTests {
 				.add(new BigDecimal(peakDuration*60).multiply(tariff.peakRate()));
 		expectedCallCost = expectedCallCost.setScale(0, RoundingMode.HALF_UP);
 		
-		DateTime callStartTime = new DateTime(2013, 11, 4, daytimePeakPeriod.PeakEnd - 1, 60 - peakDuration);
+		DateTime callStartTime = new DateTime(2013, 11, 4, daytimePeakPeriod.getPeakEnd() - 1, 60 - peakDuration);
 		DateTime callEndTime = callStartTime.plusMinutes(peakDuration + offPeakDuration);
 		
 		simulateSingleCallAndCheckBill(c1, c2, callStartTime, callEndTime, peakDuration + offPeakDuration, expectedCallCost);
@@ -166,7 +166,7 @@ public class AcceptanceTests {
 
 		int callTimeInDays = 5;
 		Tariff tariff = tariffDatabase.tarriffFor(c1);
-		DateTime callStartTime = new DateTime(2013, 11, 4, daytimePeakPeriod.PeakStart, 0);
+		DateTime callStartTime = new DateTime(2013, 11, 4, daytimePeakPeriod.getPeakStart(), 0);
 		DateTime callEndTime = callStartTime.plusDays(callTimeInDays);
 		
 		int preDuration = daytimePeakPeriod.getPeriodDurationSeconds(DayPeriod.PrePeak);

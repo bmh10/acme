@@ -6,25 +6,30 @@ import org.joda.time.DateTime;
 
 import com.acmetelecom.customer.Tariff;
 
-// TODO: add interface for this.
 /**
  * Holds all information about when peak period starts/ends and methods related to this.
  */
-public class DaytimePeakPeriod {
+public class DaytimePeakPeriod implements IPeakPeriod {
 
-	// TODO: put these in a config file??
-	public final int PeakStart = 7;
-	public final int PeakEnd = 19;
-	
+	private final int PeakStart = 7;
+	private final int PeakEnd = 19;
+
 	/**
-	 * Defines the period in a day.
+	 * Gets the hour of the peak start time.
+	 * @return The hour when the peak period starts.
 	 */
-	public enum DayPeriod {
-		PrePeak,
-		Peak,
-		PostPeak
+	public int getPeakStart() {
+		return PeakStart;
 	}
-    
+
+	/**
+	 * Gets the hour of the peak end time.
+	 * @return The hour when the peak period ends.
+	 */
+	public int getPeakEnd() {
+		return PeakEnd;
+	}
+	
 	/**
 	 * Gets the duration of a specified period in seconds.
 	 * @param period The period type to get the duration of.

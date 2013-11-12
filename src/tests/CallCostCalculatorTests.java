@@ -20,7 +20,8 @@ import com.acmetelecom.CallEnd;
 import com.acmetelecom.CallStart;
 import com.acmetelecom.DaytimePeakPeriod;
 import com.acmetelecom.FileLogger;
-import com.acmetelecom.DaytimePeakPeriod.DayPeriod;
+import com.acmetelecom.IPeakPeriod;
+import com.acmetelecom.IPeakPeriod.DayPeriod;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.Tariff;
 import com.acmetelecom.customer.TariffLibrary;
@@ -42,7 +43,7 @@ public class CallCostCalculatorTests {
 	private ArrayList<Tariff> tariffTypes;
 	
 	// Don't want to mock this as it is essential part of calculation.
-	private DaytimePeakPeriod daytimePeakPeriod;
+	private IPeakPeriod peakPeriod;
 	
 	// Instance across which tests are to be applied.
 	private CallCostCalculator callCostCalculator;
@@ -53,9 +54,9 @@ public class CallCostCalculatorTests {
 	@Before
 	public void setup() {
 		context = new Mockery();
-		daytimePeakPeriod = new DaytimePeakPeriod();
+		peakPeriod = new DaytimePeakPeriod();
 		mockTariffLibrary = context.mock(TariffLibrary.class);
-		callCostCalculator = new CallCostCalculator(mockTariffLibrary, daytimePeakPeriod);
+		callCostCalculator = new CallCostCalculator(mockTariffLibrary, peakPeriod);
 		tariffTypes = new ArrayList<Tariff>();
 		for (Tariff t : Tariff.values()) {
 			tariffTypes.add(t);
@@ -90,7 +91,7 @@ public class CallCostCalculatorTests {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int callLengthMins = 102;
-			DateTime startTime = new DateTime(2013, 11, 5, daytimePeakPeriod.PeakStart + 1, 0);
+			DateTime startTime = new DateTime(2013, 11, 5, peakPeriod.getPeakStart() + 1, 0);
 			DateTime endTime = startTime.plusMinutes(callLengthMins);
 			Call call = this.setupCall(startTime, endTime);
 			Customer customer = this.setupCustomer(tariff);
@@ -115,7 +116,7 @@ public class CallCostCalculatorTests {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int callLengthMins = 32;
-			DateTime startTime = new DateTime(2013, 11, 5, daytimePeakPeriod.PeakStart - 2, 54);
+			DateTime startTime = new DateTime(2013, 11, 5, peakPeriod.getPeakStart() - 2, 54);
 			DateTime endTime = startTime.plusMinutes(callLengthMins);
 			Call call = this.setupCall(startTime, endTime);
 			Customer customer = this.setupCustomer(tariff);
@@ -141,7 +142,7 @@ public class CallCostCalculatorTests {
 			// Setup.
 			int offPeakTime = 12;
 			int peakTime = 14;
-			DateTime startTime = new DateTime(2013, 11, 5, daytimePeakPeriod.PeakStart - 1, 60 - offPeakTime);
+			DateTime startTime = new DateTime(2013, 11, 5, peakPeriod.getPeakStart() - 1, 60 - offPeakTime);
 			DateTime endTime = startTime.plusMinutes(offPeakTime + peakTime);
 			Call call = this.setupCall(startTime, endTime);
 			Customer customer = this.setupCustomer(tariff);
@@ -168,7 +169,7 @@ public class CallCostCalculatorTests {
 			// Setup.
 			int peakTime = 32;
 			int offPeakTime = 23;
-			DateTime startTime = new DateTime(2013, 11, 5, daytimePeakPeriod.PeakEnd - 1, 60 - peakTime);
+			DateTime startTime = new DateTime(2013, 11, 5, peakPeriod.getPeakEnd() - 1, 60 - peakTime);
 			DateTime endTime = startTime.plusMinutes(offPeakTime + peakTime);
 			Call call = this.setupCall(startTime, endTime);
 			Customer customer = this.setupCustomer(tariff);
@@ -195,8 +196,8 @@ public class CallCostCalculatorTests {
 			// Setup.
 			int initialPrePeakTime = 45;
 			int finalPostPeakTime = 15;
-			DateTime startTime = new DateTime(2013, 11, 5, daytimePeakPeriod.PeakStart - 1, 60 - initialPrePeakTime);
-			DateTime endTime = new DateTime(2013, 11, 6, daytimePeakPeriod.PeakEnd, finalPostPeakTime);
+			DateTime startTime = new DateTime(2013, 11, 5, peakPeriod.getPeakStart() - 1, 60 - initialPrePeakTime);
+			DateTime endTime = new DateTime(2013, 11, 6, peakPeriod.getPeakEnd(), finalPostPeakTime);
 			Call call = this.setupCall(startTime, endTime);
 			Customer customer = this.setupCustomer(tariff);
 			
@@ -204,9 +205,9 @@ public class CallCostCalculatorTests {
 			BigDecimal result = callCostCalculator.calculateCallCost(customer, call);
 			
 			// Checks.
-			int preDuration = daytimePeakPeriod.getPeriodDurationSeconds(DayPeriod.PrePeak);
-			int peakDuration = daytimePeakPeriod.getPeriodDurationSeconds(DayPeriod.Peak);
-			int postDuration = daytimePeakPeriod.getPeriodDurationSeconds(DayPeriod.PostPeak);
+			int preDuration = peakPeriod.getPeriodDurationSeconds(DayPeriod.PrePeak);
+			int peakDuration = peakPeriod.getPeriodDurationSeconds(DayPeriod.Peak);
+			int postDuration = peakPeriod.getPeriodDurationSeconds(DayPeriod.PostPeak);
 			
 			BigDecimal expectedOffPeakCost = 
 					new BigDecimal((initialPrePeakTime + finalPostPeakTime)*60 + postDuration + preDuration).multiply(tariff.offPeakRate());
@@ -226,7 +227,7 @@ public class CallCostCalculatorTests {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int callTimeDays = 7;
-			DateTime startTime = new DateTime(2013, 11, 5, daytimePeakPeriod.PeakStart, 0);
+			DateTime startTime = new DateTime(2013, 11, 5, peakPeriod.getPeakStart(), 0);
 			DateTime endTime = startTime.plusDays(callTimeDays);
 			Call call = this.setupCall(startTime, endTime);
 			Customer customer = this.setupCustomer(tariff);
@@ -235,9 +236,9 @@ public class CallCostCalculatorTests {
 			BigDecimal result = callCostCalculator.calculateCallCost(customer, call);
 			
 			// Checks.
-			int preDuration = daytimePeakPeriod.getPeriodDurationSeconds(DayPeriod.PrePeak);
-			int peakDuration = daytimePeakPeriod.getPeriodDurationSeconds(DayPeriod.Peak);
-			int postDuration = daytimePeakPeriod.getPeriodDurationSeconds(DayPeriod.PostPeak);
+			int preDuration = peakPeriod.getPeriodDurationSeconds(DayPeriod.PrePeak);
+			int peakDuration = peakPeriod.getPeriodDurationSeconds(DayPeriod.Peak);
+			int postDuration = peakPeriod.getPeriodDurationSeconds(DayPeriod.PostPeak);
 			
 			BigDecimal expectedOffPeakCost = new BigDecimal((preDuration + postDuration)*callTimeDays).multiply(tariff.offPeakRate());
 			BigDecimal expectedPeakCost = new BigDecimal(peakDuration*callTimeDays).multiply(tariff.peakRate());
@@ -256,7 +257,7 @@ public class CallCostCalculatorTests {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int callTimeDays = 2;
-			DateTime startTime = new DateTime(2013, 12, 31, daytimePeakPeriod.PeakStart, 0);
+			DateTime startTime = new DateTime(2013, 12, 31, peakPeriod.getPeakStart(), 0);
 			DateTime endTime = startTime.plusDays(callTimeDays);
 			Call call = this.setupCall(startTime, endTime);
 			Customer customer = this.setupCustomer(tariff);
@@ -265,9 +266,9 @@ public class CallCostCalculatorTests {
 			BigDecimal result = callCostCalculator.calculateCallCost(customer, call);
 			
 			// Checks.
-			int preDuration = daytimePeakPeriod.getPeriodDurationSeconds(DayPeriod.PrePeak);
-			int peakDuration = daytimePeakPeriod.getPeriodDurationSeconds(DayPeriod.Peak);
-			int postDuration = daytimePeakPeriod.getPeriodDurationSeconds(DayPeriod.PostPeak);
+			int preDuration = peakPeriod.getPeriodDurationSeconds(DayPeriod.PrePeak);
+			int peakDuration = peakPeriod.getPeriodDurationSeconds(DayPeriod.Peak);
+			int postDuration = peakPeriod.getPeriodDurationSeconds(DayPeriod.PostPeak);
 			
 			BigDecimal expectedOffPeakCost = new BigDecimal((preDuration + postDuration)*callTimeDays).multiply(tariff.offPeakRate());
 			BigDecimal expectedPeakCost = new BigDecimal(peakDuration*callTimeDays).multiply(tariff.peakRate());
@@ -288,7 +289,7 @@ public class CallCostCalculatorTests {
 			// Setup.
 			int offPeakSeconds = 13;
 			int peakSeconds = 17;
-			DateTime startTime = new DateTime(2013, 11, 5, daytimePeakPeriod.PeakStart - 1, 59, 60 - offPeakSeconds);
+			DateTime startTime = new DateTime(2013, 11, 5, peakPeriod.getPeakStart() - 1, 59, 60 - offPeakSeconds);
 			DateTime endTime = startTime.plusSeconds(offPeakSeconds + peakSeconds);
 			Call call = this.setupCall(startTime, endTime);
 			Customer customer = this.setupCustomer(tariff);

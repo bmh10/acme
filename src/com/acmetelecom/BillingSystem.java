@@ -116,7 +116,6 @@ public class BillingSystem implements IBillingSystem {
         	return new Bill(customer, items, MoneyFormatter.penceToPounds(totalBill));
         }
 
-        // TODO: DONE move this into separate class, billing system shouldn't be concerned with individual call costing...
         for (Call call : calls) {
         	BigDecimal callCost = callCostCalculator.calculateCallCost(customer, call);
             totalBill = totalBill.add(callCost);

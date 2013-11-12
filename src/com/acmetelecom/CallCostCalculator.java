@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 
 import org.joda.time.*;
 
-import com.acmetelecom.DaytimePeakPeriod.DayPeriod;
+import com.acmetelecom.IPeakPeriod.DayPeriod;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.Tariff;
 import com.acmetelecom.customer.TariffLibrary;
@@ -15,7 +15,7 @@ import com.acmetelecom.customer.TariffLibrary;
  */
 public class CallCostCalculator implements ICallCostCalculator {
 
-	private DaytimePeakPeriod daytimePeakPeriod;
+	private IPeakPeriod peakPeriod;
 	private TariffLibrary tariffDatabase;
 	
 	/**
@@ -24,11 +24,11 @@ public class CallCostCalculator implements ICallCostCalculator {
 	 * @param daytimePeakPeriod The DaytimePeakPeriod containing information about period timings.
 	 * @exception IllegalArgumentException If any of arguments are null.
 	 */
-	public CallCostCalculator(TariffLibrary tariffDatabase, DaytimePeakPeriod daytimePeakPeriod) {
+	public CallCostCalculator(TariffLibrary tariffDatabase, IPeakPeriod peakPeriod) {
 		AssertionHelper.NotNull(tariffDatabase, "tariffDatabase");
-		AssertionHelper.NotNull(daytimePeakPeriod, "daytimePeakPeriod");
+		AssertionHelper.NotNull(peakPeriod, "peakPeriod");
 		this.tariffDatabase = tariffDatabase;
-		this.daytimePeakPeriod = daytimePeakPeriod;
+		this.peakPeriod = peakPeriod;
 	}
 	
 	/**
@@ -51,7 +51,7 @@ public class CallCostCalculator implements ICallCostCalculator {
         
         // Assumes calls don't last more than a year.
         int endDay = end.getDayOfYear();
-        DayPeriod endPeriod = daytimePeakPeriod.getPeriodOfDay(end);
+        DayPeriod endPeriod = peakPeriod.getPeriodOfDay(end);
         
         DateTime currentTime = start;
         DayPeriod currentPeriod;
@@ -61,13 +61,13 @@ public class CallCostCalculator implements ICallCostCalculator {
         // Goes through each period between start and end of call, summing cost progressively.
         while (!done) {
         	int currentDay = currentTime.getDayOfYear();
-        	currentPeriod = daytimePeakPeriod.getPeriodOfDay(currentTime);
-        	BigDecimal currentPeriodRate = daytimePeakPeriod.getPeriodRate(currentPeriod, tariff);
+        	currentPeriod = peakPeriod.getPeriodOfDay(currentTime);
+        	BigDecimal currentPeriodRate = peakPeriod.getPeriodRate(currentPeriod, tariff);
         	boolean callEndsThisPeriod = currentDay == endDay && currentPeriod == endPeriod;
         	
         	// First period (if call does not end in first period) -> add cost from start time until end of first period.
         	if (firstPeriod && !callEndsThisPeriod) {
-        		int time = daytimePeakPeriod.getSecondInDayAtEndOfPeriod(currentPeriod) - start.getSecondOfDay();
+        		int time = peakPeriod.getSecondInDayAtEndOfPeriod(currentPeriod) - start.getSecondOfDay();
         		BigDecimal periodCost = new BigDecimal(time).multiply(currentPeriodRate);
         		cost = cost.add(periodCost);
         		currentTime = currentTime.plusSeconds(time);
@@ -83,7 +83,7 @@ public class CallCostCalculator implements ICallCostCalculator {
         	// TODO: could make this more efficient -> if not at endDay and at PrePeak period then add cost for whole day.
         	// Call continues throughout this period -> add cost of whole period.
         	else {
-    			int periodDuration = daytimePeakPeriod.getPeriodDurationSeconds(currentPeriod);
+    			int periodDuration = peakPeriod.getPeriodDurationSeconds(currentPeriod);
     			BigDecimal periodCost = new BigDecimal(periodDuration).multiply(currentPeriodRate);
     			cost = cost.add(periodCost);
     			currentTime = currentTime.plusSeconds(periodDuration);
