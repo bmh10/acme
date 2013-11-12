@@ -80,6 +80,14 @@ public class CallEventManager implements ICallEventManager {
     	if (callStartEvents == null) {
     		callStartEvents = new ArrayList<CallStart>();
     	}
+    	else {
+    		// If caller has started call to same callee twice without hanging up first throw exception.
+    		for (CallStart e : callStartEvents) {
+    			if (e.getCallee() == callStart.getCallee()) {
+    				throw new IllegalStateException();
+    			}
+    		}
+    	}
     	
     	callStartEvents.add(callStart);
     	callsInProgress.put(caller, callStartEvents);
