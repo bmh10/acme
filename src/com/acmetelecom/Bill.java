@@ -41,7 +41,7 @@ public class Bill {
 	 * Gets the list of calls this customer will be charged for.
 	 * @return The list of calls included in this bill.
 	 */
-	public List<LineItem> GetCalls() {
+	public List<LineItem> getCalls() {
 		return calls;
 	}
 	
@@ -49,7 +49,7 @@ public class Bill {
 	 * Gets the customer's total bill.
 	 * @return The customer's total bill as a String.
 	 */
-	public String GetTotalBill() {
+	public String getTotalBill() {
 		return totalBill;
 	}
 }

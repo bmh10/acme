@@ -11,7 +11,7 @@ import com.acmetelecom.customer.Tariff;
 import com.acmetelecom.customer.TariffLibrary;
 
 /**
- * Contains logic for calculating call costs.
+ * Contains logic for calculating call costs according to new regulations.
  */
 public class CallCostCalculator implements ICallCostCalculator {
 
@@ -80,7 +80,6 @@ public class CallCostCalculator implements ICallCostCalculator {
         		cost = cost.add(periodCost);
         		done = true;
         	}
-        	// TODO: could make this more efficient -> if not at endDay and at PrePeak period then add cost for whole day.
         	// Call continues throughout this period -> add cost of whole period.
         	else {
     			int periodDuration = peakPeriod.getPeriodDurationSeconds(currentPeriod);

@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * High-level billing system logic, concerned with storing call events and creating customer bills.
+ * High-level billing system logic, concerned with forwarding call events and creating customer bills.
  */
 public class BillingSystem implements IBillingSystem {
 
@@ -111,20 +111,16 @@ public class BillingSystem implements IBillingSystem {
     private Bill createBillFor(Customer customer) {
     	BigDecimal totalBill = new BigDecimal(0);
         List<LineItem> items = new ArrayList<LineItem>();
+        
+        // Returns an empty list if no calls found for customer.
         List<Call> calls = callEventManager.getCallsForCustomer(customer.getPhoneNumber());
         
-        if (calls == null) {
-        	return new Bill(customer, items, MoneyFormatter.penceToPounds(totalBill));
-        }
-
         for (Call call : calls) {
         	BigDecimal callCost = callCostCalculator.calculateCallCost(customer, call);
             totalBill = totalBill.add(callCost);
             items.add(new LineItem(call, callCost));
         }
 
-        Bill bill = new Bill(customer, items, MoneyFormatter.penceToPounds(totalBill));
-        billGenerator.generateBill(bill);
-        return bill;
+        return billGenerator.sendBill(customer, items, MoneyFormatter.penceToPounds(totalBill));
     }
 }

@@ -25,7 +25,7 @@ public interface IPeakPeriod {
 		 */
 		int getPeakStart();
 		
-		/**
+		/**	
 		 * Gets the hour of the peak end time.
 		 * @return The hour when the peak period ends.
 		 */

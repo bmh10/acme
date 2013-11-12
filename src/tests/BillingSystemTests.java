@@ -1,7 +1,5 @@
 package tests;
 
-import static org.junit.Assert.assertTrue;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +12,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.acmetelecom.Bill;
 import com.acmetelecom.BillingSystem;
 import com.acmetelecom.Call;
 import com.acmetelecom.CallEnd;
@@ -24,7 +21,6 @@ import com.acmetelecom.FileLogger;
 import com.acmetelecom.IBillGenerator;
 import com.acmetelecom.ICallCostCalculator;
 import com.acmetelecom.ICallEventManager;
-import com.acmetelecom.MoneyFormatter;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.CustomerDatabase;
 
@@ -158,45 +154,12 @@ public class BillingSystemTests {
 			oneOf (mockCallEventManager).getCallsForCustomer(dummyCalleeNumber); will(returnValue(customer2Calls));
 			oneOf (mockCallCostCalculator).calculateCallCost(customers.get(0), customer1Calls.get(0)); will(returnValue(call1Cost)); 
 			oneOf (mockCallCostCalculator).calculateCallCost(customers.get(1), customer2Calls.get(0)); will(returnValue(call2Cost));
-			exactly(2).of (mockBillGenerator).generateBill(with(any(Bill.class)));
+			exactly(2).of (mockBillGenerator).sendBill(with(any(Customer.class)), with(any(List.class)), with(any(String.class)));
 			oneOf (mockCallEventManager).clearCallLogs();
 		}});
 		
-		ArrayList<Bill> bills = billingSystem.createCustomerBills();
+		billingSystem.createCustomerBills();
 		
-		assertTrue(bills.size() == 2);
-		for (Bill b : bills) {
-			if (b.getCustomer().getPhoneNumber() == dummyCallerNumber) {
-				assertTrue(b.GetTotalBill().equals(MoneyFormatter.penceToPounds(call1Cost)));
-			}
-			else if (b.getCustomer().getPhoneNumber() == dummyCalleeNumber) {
-				assertTrue(b.GetTotalBill().equals(MoneyFormatter.penceToPounds(call2Cost)));
-			}
-		}
-		
-		context.assertIsSatisfied();
-	}
-	
-	/**
-	 * Tests that creating customer bills for customer's with no stored call information returns a bill with no call items
-	 * and zero total charge.
-	 */
-	@Test
-	public void creatingCustomerBillsReturnsBillWithNoItemsIfNoCallInformationForCustomer() {
-		final List<Customer> customers = new ArrayList<Customer>();
-		customers.add(new Customer(dummyCustomerName, dummyCallerNumber, "Standard" ));
-		
-		context.checking(new Expectations() {{  
-			oneOf (mockCustomerDatabase).getCustomers(); will(returnValue(customers));
-			oneOf (mockCallEventManager).getCallsForCustomer(dummyCallerNumber); will(returnValue(null));
-			oneOf (mockCallEventManager).clearCallLogs();
-		}});
-		
-		ArrayList<Bill> bills = billingSystem.createCustomerBills();
-		
-		assertTrue(bills.size() == 1);
-		assertTrue(bills.get(0).GetCalls().size() == 0);
-		assertTrue(bills.get(0).GetTotalBill().equals(MoneyFormatter.penceToPounds(new BigDecimal(0.0))));
 		context.assertIsSatisfied();
 	}
 }

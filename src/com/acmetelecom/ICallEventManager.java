@@ -18,6 +18,7 @@ public interface ICallEventManager {
 	/**
 	 * Gets the call logs for a particular customer.
 	 * @param caller The caller the get call logs for.
+	 * @return The list of calls for the specified customer or an empty list if no records found for the customer.
 	 * @exception IllegalArgumentException If any of arguments are null.
 	 */
 	List<Call> getCallsForCustomer(String caller);

@@ -1,5 +1,7 @@
 package tests;
 
+import static org.junit.Assert.assertTrue;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +69,7 @@ public class HtmlBillGeneratorTests {
 	@Test
 	public void attemptingToGenerateBillWithNullParametersThrowsIllegalArgumentException() {
 		exception.expect(IllegalArgumentException.class);
-		htmlBillGenerator.generateBill(null);
+		htmlBillGenerator.sendBill(null, null, null);
 	}
 	
 	/**
@@ -84,7 +86,29 @@ public class HtmlBillGeneratorTests {
 					new BigDecimal(i)));
 		}
 		
-		Bill bill = new Bill(
+		context.checking(new Expectations() {{  
+			oneOf (mockBillPrinter).printHeading(dummyCustomerName, dummyCallerNumber, dummyTariff);
+			exactly(items.size()).of (mockBillPrinter).printItem(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(String.class)));
+			oneOf (mockBillPrinter).printTotal(dummyTotalBill);
+		}});
+		
+		htmlBillGenerator.sendBill(new Customer(dummyCustomerName, dummyCallerNumber, dummyTariff), items, dummyTotalBill);
+		context.assertIsSatisfied();
+	}
+	
+	/**
+	 * Tests that generating bill delegates to BillPrinter and calls prints all correct sub-parts of the bill.
+	 */
+	@Test
+	public void generatingBillReturnsCorrectBill() {
+		final List<LineItem> items = new ArrayList<LineItem>();
+			items.add(new LineItem(
+					new Call(
+						new CallStart(dummyCallerNumber, dummyCalleeNumber, DateTime.now()),
+						new CallEnd(dummyCallerNumber, dummyCalleeNumber, DateTime.now().plusMinutes(1))),
+					new BigDecimal(1)));
+		
+		Bill expectedBill = new Bill(
 				new Customer(dummyCustomerName, dummyCallerNumber, dummyTariff),
 				items,
 				dummyTotalBill);
@@ -95,7 +119,15 @@ public class HtmlBillGeneratorTests {
 			oneOf (mockBillPrinter).printTotal(dummyTotalBill);
 		}});
 		
-		htmlBillGenerator.generateBill(bill);
+		Bill returnedBill = htmlBillGenerator.sendBill(new Customer(dummyCustomerName, dummyCallerNumber, dummyTariff), items, dummyTotalBill);
+		
 		context.assertIsSatisfied();
+		Customer returnedCustomer = returnedBill.getCustomer();
+		assertTrue(returnedCustomer.getFullName().equals(dummyCustomerName));
+		assertTrue(returnedCustomer.getPhoneNumber().equals(dummyCallerNumber));
+		assertTrue(returnedCustomer.getPricePlan().equals(dummyTariff));
+		assertTrue(expectedBill.getCalls().size() == items.size());
+		assertTrue(expectedBill.getCalls().get(0).callee().equals(dummyCalleeNumber));
+		assertTrue(returnedBill.getTotalBill().equals(dummyTotalBill));
 	}
 }
