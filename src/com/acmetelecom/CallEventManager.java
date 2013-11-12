@@ -22,6 +22,7 @@ public class CallEventManager implements ICallEventManager {
 	 * a single Call object and stores it in call logs.
 	 * @param event The incoming call event to handle.
 	 * @exception IllegalArgumentException If any of arguments are null.
+	 * @exception IllegalStateException Thrown if caller starts two calls with same callee simultaneously.
 	 */
 	public void handleEvent(CallEvent event) {
 		AssertionHelper.NotNull(event, "event");
@@ -73,6 +74,7 @@ public class CallEventManager implements ICallEventManager {
 	/**
 	 * Adds the specified CallStart event to the calls in progress log.
 	 * @param callStart The CallStart event to add.
+	 * @exception IllegalStateException Thrown if caller starts two calls with same callee simultaneously.
 	 */
 	private void addCallStartEventToCallsInProgress(CallStart callStart) {
 		String caller = callStart.getCaller();

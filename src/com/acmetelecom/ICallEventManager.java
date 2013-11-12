@@ -11,6 +11,7 @@ public interface ICallEventManager {
 	 * Handles incoming call events.
 	 * @param event The incoming call event to handle.
 	 * @exception IllegalArgumentException If any of arguments are null.
+	 * @exception IllegalStateException Thrown if caller starts two calls with same callee simultaneously.
 	 */
 	void handleEvent(CallEvent event);
 	
