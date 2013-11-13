@@ -126,8 +126,8 @@ public class HtmlBillGeneratorTests {
 		assertTrue(returnedCustomer.getFullName().equals(dummyCustomerName));
 		assertTrue(returnedCustomer.getPhoneNumber().equals(dummyCallerNumber));
 		assertTrue(returnedCustomer.getPricePlan().equals(dummyTariff));
-		assertTrue(expectedBill.getCalls().size() == items.size());
-		assertTrue(expectedBill.getCalls().get(0).callee().equals(dummyCalleeNumber));
+		assertTrue(expectedBill.getItems().size() == items.size());
+		assertTrue(expectedBill.getItems().get(0).callee().equals(dummyCalleeNumber));
 		assertTrue(returnedBill.getTotalBill().equals(dummyTotalBill));
 	}
 }

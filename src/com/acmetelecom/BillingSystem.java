@@ -94,8 +94,7 @@ public class BillingSystem implements IBillingSystem {
         log.info("About to create " + customers.size() + " customer bills.");
         
         for (Customer customer : customers) {
-            Bill bill = createBillFor(customer);
-            customerBills.add(bill);
+            customerBills.add(createBillFor(customer));
         }
         
         callEventManager.clearCallLogs();

@@ -55,7 +55,6 @@ public class CallCostCalculator implements ICallCostCalculator {
         
         DateTime currentTime = start;
         DayPeriod currentPeriod;
-        boolean firstPeriod = true;
         boolean done = false;
         
         // Goes through each period between start and end of call, summing cost progressively.
@@ -65,31 +64,23 @@ public class CallCostCalculator implements ICallCostCalculator {
         	BigDecimal currentPeriodRate = peakPeriod.getPeriodRate(currentPeriod, tariff);
         	boolean callEndsThisPeriod = currentDay == endDay && currentPeriod == endPeriod;
         	
-        	// First period (if call does not end in first period) -> add cost from start time until end of first period.
-        	if (firstPeriod && !callEndsThisPeriod) {
-        		int time = peakPeriod.getSecondInDayAtEndOfPeriod(currentPeriod) - start.getSecondOfDay();
-        		BigDecimal periodCost = new BigDecimal(time).multiply(currentPeriodRate);
-        		cost = cost.add(periodCost);
-        		currentTime = currentTime.plusSeconds(time);
-        		firstPeriod = false;
-        	}
         	// Call ends in this period -> add cost from now until call end time.
-        	else if (callEndsThisPeriod) {
+        	if (callEndsThisPeriod) {
         		int time = end.getSecondOfDay() - currentTime.getSecondOfDay();
         		BigDecimal periodCost = new BigDecimal(time).multiply(currentPeriodRate);
         		cost = cost.add(periodCost);
         		done = true;
         	}
-        	// Call continues throughout this period -> add cost of whole period.
+        	// Call continues to end of this period -> add cost from current time until end of period.
         	else {
-    			int periodDuration = peakPeriod.getPeriodDurationSeconds(currentPeriod);
-    			BigDecimal periodCost = new BigDecimal(periodDuration).multiply(currentPeriodRate);
-    			cost = cost.add(periodCost);
-    			currentTime = currentTime.plusSeconds(periodDuration);
+        		int time = peakPeriod.getSecondInDayAtEndOfPeriod(currentPeriod) - currentTime.getSecondOfDay();
+        		BigDecimal periodCost = new BigDecimal(time).multiply(currentPeriodRate);
+        		cost = cost.add(periodCost);
+        		currentTime = currentTime.plusSeconds(time);
         	}
         }
         
         cost = cost.setScale(0, RoundingMode.HALF_UP);
         return cost;
-	}	
+	}
 }

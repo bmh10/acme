@@ -206,7 +206,7 @@ public class AcceptanceTests {
 		assertTrue(bills.size() == dummyCustomers.size());
 		int callsLogged = 0;
 		for (Bill bill : bills) {
-			callsLogged += bill.getCalls().size();
+			callsLogged += bill.getItems().size();
 		}
 
 		assertTrue(callsMade == callsLogged);
@@ -235,7 +235,7 @@ public class AcceptanceTests {
 		assertTrue(bills.size() == dummyCustomers.size());
 		for (Bill bill : bills) {
 			if (bill.getCustomer().getPhoneNumber().equals(c1.getPhoneNumber())) {
-				List<LineItem> calls = bill.getCalls();
+				List<LineItem> calls = bill.getItems();
 				String totalBill = bill.getTotalBill();
 				
 				assertTrue(calls.size() == 1);
