@@ -131,6 +131,7 @@ public class BillingSystemTests {
 	 * Tests that creating a customer bill gets call information from the CallEventManager and delegates to the CallCostCalculator
 	 * and BillGenerator for each customer returned from the customer database.
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void creatingCustomerBillsGetsCallInformationFromCallEventManagerAndDelegatesToCallCostCalculatorAndBillGeneratorForEachCustomer() {
 		final List<Customer> customers = new ArrayList<Customer>();

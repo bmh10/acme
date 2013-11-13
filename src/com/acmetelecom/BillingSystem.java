@@ -66,7 +66,7 @@ public class BillingSystem implements IBillingSystem {
      * @param caller The caller phone number.
      * @param callee The callee phone number.
      * @exception IllegalArgumentException If any of arguments are null.
-     * @exception IllegalStateException Thrown if caller starts two calls with same callee simultaneously.
+     * @exception IllegalStateException Thrown if caller starts two calls with same callee simultaneously
      */
     public void callInitiated(String caller, String callee) {
     	log.info("Call from " + caller + " to " + callee + " initiated.");

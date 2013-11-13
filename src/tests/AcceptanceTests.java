@@ -181,10 +181,68 @@ public class AcceptanceTests {
 	}
 	
 	/**
+	 * Tests that bill is calculated correctly when single user makes multiple calls simultaneously.
+	 */
+	@Test
+	public void billCalculatedCorrectlyWhenSingleUserMakesMultipleCallsSimultaneously() {
+		Customer c1 = getRandomCustomer();
+		Customer c2 = getRandomCustomer();
+		Customer c3 = getRandomCustomer();
+
+		int c2callTimeInMins = 7;
+		int c3callTimeInMins = 5;
+		Tariff tariff = tariffDatabase.tarriffFor(c1);
+		DateTime callStartTime = new DateTime(2013, 11, 4, daytimePeakPeriod.getPeakStart(), 0);
+		
+		BigDecimal c2expectedCallCost = new BigDecimal((c2callTimeInMins)*60).multiply(tariff.peakRate());
+		BigDecimal c3expectedCallCost = new BigDecimal((c3callTimeInMins)*60).multiply(tariff.peakRate());
+		c2expectedCallCost = c2expectedCallCost.setScale(0, RoundingMode.HALF_UP);
+		c3expectedCallCost = c3expectedCallCost.setScale(0, RoundingMode.HALF_UP);
+		
+		clock.setTime(callStartTime);
+		billingSystem.callInitiated(c1.getPhoneNumber(), c2.getPhoneNumber());
+		billingSystem.callInitiated(c1.getPhoneNumber(), c3.getPhoneNumber());
+		clock.setTime(callStartTime.plusMinutes(c3callTimeInMins));
+		billingSystem.callCompleted(c1.getPhoneNumber(), c3.getPhoneNumber());
+		clock.setTime(callStartTime.plusMinutes(c2callTimeInMins));
+		billingSystem.callCompleted(c1.getPhoneNumber(), c2.getPhoneNumber());
+		
+		ArrayList<Bill> bills = billingSystem.createCustomerBills();
+		
+		assertTrue(bills.size() == dummyCustomers.size());
+		for (Bill bill : bills) {
+			if (bill.getCustomer().getPhoneNumber().equals(c1.getPhoneNumber())) {
+				List<LineItem> calls = bill.getItems();
+				String totalBill = bill.getTotalBill();
+				
+				assertTrue(calls.size() == 2);
+				for (LineItem item : calls) {
+					if (item.callee() == c2.getPhoneNumber()) {
+						assertTrue(item.durationMinutes().equals(String.valueOf(c2callTimeInMins)+":00"));
+						assertTrue(item.cost().equals(c2expectedCallCost));
+						assert(totalBill.equals(MoneyFormatter.penceToPounds(c2expectedCallCost)));
+					}
+					else if (item.callee() == c3.getPhoneNumber()) {
+						assertTrue(item.durationMinutes().equals(String.valueOf(c3callTimeInMins)+":00"));
+						assertTrue(item.cost().equals(c3expectedCallCost));
+						assert(totalBill.equals(MoneyFormatter.penceToPounds(c3expectedCallCost)));
+					}
+					else {
+						fail("Unrecognised bill");
+					}
+				}
+				return;
+			}
+		}
+		
+		fail("No bill found for call.");
+	}
+	
+	/**
 	 * Tests that all calls are logged when the billing system receives a large number of calls.
 	 */
 	@Test
-	public void testAllCallsAreLoggedWhenSystemReceivesLargeNumberOfCalls() {
+	public void allCallsAreLoggedWhenSystemReceivesLargeNumberOfCalls() {
 		
 		// Run simulation for 300ms.
 		long end = System.currentTimeMillis() + 300;

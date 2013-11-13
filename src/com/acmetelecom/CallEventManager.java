@@ -3,6 +3,7 @@ package com.acmetelecom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * The CallEventManager is responsible for handling call events, grouping them together to make complete calls
@@ -10,6 +11,8 @@ import java.util.List;
  */
 public class CallEventManager implements ICallEventManager {
 
+	private Logger log = FileLogger.create();
+	
 	// Hash map of completed calls, indexed by caller phone number.
 	private HashMap<String, ArrayList<Call>> callLog = new HashMap<String, ArrayList<Call>>();
 	
@@ -44,7 +47,8 @@ public class CallEventManager implements ICallEventManager {
 			  }
 			}
 			
-			System.out.println("No matching start call event was found for this end call event - ");
+			log.warning("No matching CallStart event was found for CallEnd event with caller "
+					+ "= " + event.getCaller() + ", callee = " + event.getCallee());
 		}
 	}
 	
@@ -79,6 +83,7 @@ public class CallEventManager implements ICallEventManager {
 	 */
 	private void addCallStartEventToCallsInProgress(CallStart callStart) {
 		String caller = callStart.getCaller();
+
     	ArrayList<CallStart> callStartEvents = callsInProgress.get(caller);
     	if (callStartEvents == null) {
     		callStartEvents = new ArrayList<CallStart>();
@@ -87,7 +92,7 @@ public class CallEventManager implements ICallEventManager {
     		// If caller has started call to same callee twice without hanging up first throw exception.
     		for (CallStart e : callStartEvents) {
     			if (e.getCallee() == callStart.getCallee()) {
-    				throw new IllegalStateException();
+    				throw new IllegalStateException("Caller cannot make call to same callee twice simultaneously.");
     			}
     		}
     	}

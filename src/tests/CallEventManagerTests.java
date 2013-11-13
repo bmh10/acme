@@ -120,6 +120,17 @@ public class CallEventManagerTests {
 	}
 	
 	/**
+	 * Tests that if a customer starts a call to same callee twice without hanging up in between then an IllegalStateException
+	 * is thrown.
+	 */
+	@Test
+	public void ifCustomerCallsOwnNumberIllegalStateExceptionThrown() {
+		exception.expect(IllegalStateException.class);
+		callEventManager.handleEvent(new CallStart(dummyCallerNumber, dummyCalleeNumber+"1", DateTime.now()));
+		callEventManager.handleEvent(new CallStart(dummyCallerNumber, dummyCalleeNumber+"1", DateTime.now()));		
+	}
+	
+	/**
 	 * Tests that clearing the call logs clears out the call logs.
 	 */
 	@Test
