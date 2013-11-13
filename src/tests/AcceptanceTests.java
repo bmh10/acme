@@ -230,8 +230,8 @@ public class AcceptanceTests {
 			BigDecimal expectedCallCost) {
 		
 		simulateCall(c1, c2, callStartTime, callEndTime);
-		
 		ArrayList<Bill> bills = billingSystem.createCustomerBills();
+		
 		assertTrue(bills.size() == dummyCustomers.size());
 		for (Bill bill : bills) {
 			if (bill.getCustomer().getPhoneNumber().equals(c1.getPhoneNumber())) {

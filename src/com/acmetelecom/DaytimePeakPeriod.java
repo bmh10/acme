@@ -55,7 +55,7 @@ public class DaytimePeakPeriod implements IPeakPeriod {
  		
  		int a = getPeriodDurationSeconds(DayPeriod.PrePeak);
  		int b = getPeriodDurationSeconds(DayPeriod.Peak);
- 		int c = getPeriodDurationSeconds(DayPeriod.PrePeak);
+ 		int c = getPeriodDurationSeconds(DayPeriod.PostPeak);
  		
  		switch (period) {
  		case PrePeak:  return a;
