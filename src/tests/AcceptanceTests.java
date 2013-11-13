@@ -80,7 +80,7 @@ public class AcceptanceTests {
 	 * Tests that call during peak time is charged at peak rate using correct tariff.
 	 */
 	@Test
-	public void CallDuringPeakTimeChargedAtPeakRate() {
+	public void callDuringPeakTimeChargedAtPeakRate() {
 		Customer c1 = getRandomCustomer();
 		Customer c2 = getRandomCustomer();
 
@@ -99,7 +99,7 @@ public class AcceptanceTests {
 	 * Tests that call during off-peak time is charged at off-peak rate using correct tariff.
 	 */
 	@Test
-	public void CallDuringOffPeakTimeChargedAtOffPeakRate() {
+	public void callDuringOffPeakTimeChargedAtOffPeakRate() {
 		Customer c1 = getRandomCustomer();
 		Customer c2 = getRandomCustomer();
 
@@ -118,7 +118,7 @@ public class AcceptanceTests {
 	 * Tests that call which crosses over from off-peak to peak period is charged correctly.
 	 */
 	@Test
-	public void CallCrossingOverFromOffPeakToPeakIsChargedAtPeakRate() {
+	public void callCrossingOverFromOffPeakToPeakIsChargedAtPeakRate() {
 		Customer c1 = getRandomCustomer();
 		Customer c2 = getRandomCustomer();
 
@@ -139,7 +139,7 @@ public class AcceptanceTests {
 	 * Tests that call which crosses over from peak to off-peak period is charged correctly.
 	 */
 	@Test
-	public void CallCrossingOverFromPeakToOffPeakIsChargedAtPeakRate() {
+	public void callCrossingOverFromPeakToOffPeakIsChargedAtPeakRate() {
 		Customer c1 = getRandomCustomer();
 		Customer c2 = getRandomCustomer();
 
@@ -160,7 +160,7 @@ public class AcceptanceTests {
 	 * Tests that a long call which continues throughout multiple peak and off-peak periods is charged correctly.
 	 */
 	@Test
-	public void LongCallCoveringMultiplePeakAndOffPeakPeriodsIsChargedCorrectly() {
+	public void longCallCoveringMultiplePeakAndOffPeakPeriodsIsChargedCorrectly() {
 		Customer c1 = getRandomCustomer();
 		Customer c2 = getRandomCustomer();
 
@@ -184,7 +184,7 @@ public class AcceptanceTests {
 	 * Tests that all calls are logged when the billing system receives a large number of calls.
 	 */
 	@Test
-	public void TestAllCallsAreLoggedWhenSystemReceivesLargeNumberOfCalls() {
+	public void testAllCallsAreLoggedWhenSystemReceivesLargeNumberOfCalls() {
 		
 		// Run simulation for 300ms.
 		long end = System.currentTimeMillis() + 300;

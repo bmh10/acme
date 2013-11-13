@@ -68,7 +68,7 @@ public class CallCostCalculatorTests {
 	 * Tests that passing null parameters in to CallCostCalculator constructor throws IllegalArgumentException.
 	 */
 	@Test
-	public void AttemptingToCreateCallCostCalculatorWithNullParametersThrowsInvalidArgumentException() {
+	public void attemptingToCreateCallCostCalculatorWithNullParametersThrowsInvalidArgumentException() {
 		exception.expect(IllegalArgumentException.class);
 		new CallCostCalculator(null, null);
 	}
@@ -77,7 +77,7 @@ public class CallCostCalculatorTests {
 	 * Tests that passing null parameters in to calculateCallCost function throws an InvalidArgumentException.
 	 */
 	@Test
-	public void AttemptingToCalculateCallCostWithNullParametersThrowsInvalidArgumentException() {
+	public void attemptingToCalculateCallCostWithNullParametersThrowsInvalidArgumentException() {
 		exception.expect(IllegalArgumentException.class);
 		callCostCalculator.calculateCallCost(null, null);
 	}
@@ -87,7 +87,7 @@ public class CallCostCalculatorTests {
 	 * for each tariff type.
 	 */
 	@Test
-	public void CallThatStartsAndEndsInSamePeakPeriodIsChargedCorrectly() {
+	public void callThatStartsAndEndsInSamePeakPeriodIsChargedCorrectly() {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int callLengthMins = 102;
@@ -112,7 +112,7 @@ public class CallCostCalculatorTests {
 	 * for each tariff type.
 	 */
 	@Test
-	public void CallThatStartsAndEndsInSameOffPeakPeriodIsChargedCorrectly() {
+	public void callThatStartsAndEndsInSameOffPeakPeriodIsChargedCorrectly() {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int callLengthMins = 32;
@@ -137,7 +137,7 @@ public class CallCostCalculatorTests {
 	 * for each tariff type.
 	 */
 	@Test
-	public void CallThatStartsInOffPeakPeriodAndEndsInPeakPeriodOnSameDayIsChargedCorrectly() {
+	public void callThatStartsInOffPeakPeriodAndEndsInPeakPeriodOnSameDayIsChargedCorrectly() {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int offPeakTime = 12;
@@ -164,7 +164,7 @@ public class CallCostCalculatorTests {
 	 * for each tariff type.
 	 */
 	@Test
-	public void CallThatStartsInPeakPeriodAndEndsInOffPeakPeriodOnSameDayIsChargedCorrectly() {
+	public void callThatStartsInPeakPeriodAndEndsInOffPeakPeriodOnSameDayIsChargedCorrectly() {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int peakTime = 32;
@@ -191,7 +191,7 @@ public class CallCostCalculatorTests {
 	 * is charged correctly for each tariff type.
 	 */
 	@Test
-	public void CallThatStartsInPrePeakPeriodAndEndsInPostPeakPeriodOfNextDayIsChargedCorrectly() {
+	public void callThatStartsInPrePeakPeriodAndEndsInPostPeakPeriodOfNextDayIsChargedCorrectly() {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int initialPrePeakTime = 45;
@@ -223,7 +223,7 @@ public class CallCostCalculatorTests {
 	 * Tests that a call that lasts for a week is charged correctly for each tariff type.
 	 */
 	@Test
-	public void CallThatLastsForAWeekIsChargedCorrectly() {
+	public void callThatLastsForAWeekIsChargedCorrectly() {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int callTimeDays = 7;
@@ -253,7 +253,7 @@ public class CallCostCalculatorTests {
 	 * Tests that a call which goes into a new year is charged correctly for each tariff type.
 	 */
 	@Test
-	public void CallThatGoesIntoNewYearIsChargedCorrectly() {
+	public void callThatGoesIntoNewYearIsChargedCorrectly() {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int callTimeDays = 2;
@@ -284,7 +284,7 @@ public class CallCostCalculatorTests {
 	 * for each tariff type.
 	 */
 	@Test
-	public void CallThatLastsAFewSecondsAndCrossesIntoPeakPeriodIsChargedCorrectly() {
+	public void callThatLastsAFewSecondsAndCrossesIntoPeakPeriodIsChargedCorrectly() {
 		for (Tariff tariff : tariffTypes) {
 			// Setup.
 			int offPeakSeconds = 13;
