@@ -41,6 +41,7 @@ public class BillingSystem implements IBillingSystem {
      * @param callCostCalculator The call cost calculator to use when generating bills.
      * @param billGenerator The bill generator to use to generate bills.
      * @param customerDatabase The customer database to refer to for customer information.
+     * @param clock The clock implementation to use.
      * @exception IllegalArgumentException If any of arguments are null.
      */
     public BillingSystem(
