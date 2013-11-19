@@ -1,0 +1,14 @@
+Coding Conventions
+------------------
+- All method names should start with a lower case letter.
+- All class names should start with an upper case letter.
+- All methods and classes should be commented using standard Javadoc style (including short descriptions for parameters, return values and any exceptions thrown).
+- All interfaces and interface definitions should be commented using the same style.
+- Class properties or members need only be commented if their name is not obvious.
+- All interfaces should be have a name prefixed by 'I'.
+- All tests should have a name suffixed by 'Tests'.
+- All unit test class names should contain the name of the class they are testing.
+- All tests should be placed in a separate package named 'tests'.
+- The Logger should be turned off for all tests.
+- Logging should only be done to warn for invalid states or to provide information at important points in execution (i.e. not in every method).
+- Not null assertions should be performed on all parameters which are passed into public methods using the AssertionHelper class.
