@@ -19,7 +19,7 @@ public class FileLogger {
 	
 	private static Logger logger;
 	
-	/*
+	/**
 	 * Creates a new logger which appends to a log file or returns existing logger if already created.
 	 */
 	public static Logger create() {
@@ -47,8 +47,9 @@ public class FileLogger {
 		return logger;
 	}
 	
-	/*
+	/**
 	 * Turns the logger on or off.
+	 * @param active Indicates whether the logger should be set to active or not.
 	 */
 	public static void setActive(boolean active) {
 		if (logger != null) {

@@ -50,6 +50,9 @@ public class AcceptanceTests {
 	// Entry point to the system.
 	IBillingSystem billingSystem;
 	
+	/**
+	 * Setup which is run before each unit test.
+	 */
 	@Before
 	public void Setup() {
 		 rand = new Random();

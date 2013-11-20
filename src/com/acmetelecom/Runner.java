@@ -13,9 +13,6 @@ public class Runner {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Running...");
 		
-		// TODO: make CallEventManager which groups incoming events as Calls when corresponding start and end events are received.
-		// -> separate this behaviour from BillingSystem which should not be concerned with call events (SRP).
-		
 		BillingSystem billingSystem = new BillingSystem();
 		
 		billingSystem.callInitiated("447711232343", "447766511332");
